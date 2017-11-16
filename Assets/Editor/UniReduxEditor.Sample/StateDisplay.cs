@@ -3,7 +3,7 @@ using UniRedux.Sample;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.UniRedux.Sample
+namespace UniReduxEditor.Sample
 {
     public class StateDisplay : EditorWindow
     {

@@ -1,7 +1,7 @@
 ﻿using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Editor.UniRedux
+namespace UniReduxEditor
 {
     public class StateTypeNameColumn : MultiColumnHeaderState.Column, IHasColumnIndex
     {

@@ -1,7 +1,11 @@
 namespace UniRedux.Sample
 {
-    public class ToDoApplication : IApplication<ToDoListState>
+    /// <summary>
+    /// ToDo Application
+    /// </summary>
+    public class ToDoApplication : Application<ToDoState, ToDoApplication>
     {
-        public IStore<ToDoListState> CurrentStore => new Store<ToDoListState>(ToDoListReducer.Execute, ToDoListReducer.InitState);
+        protected override IStore<ToDoState> InitStore
+            => new Store<ToDoState>(ToDoReducer.Execute, ToDoReducer.InitState, UniReduxMiddleware.Logger);
     }
 }

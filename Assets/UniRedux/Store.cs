@@ -2,6 +2,9 @@
 
 namespace UniRedux
 {
+    /// <summary>
+    /// Store
+    /// </summary>
     public class Store<TState> : IStore<TState>
     {
         private readonly object _syncRoot = new object();
@@ -12,13 +15,27 @@ namespace UniRedux
         private event Action<Exception> _errorListener;
         private event Action<TState> _nextListener;
 
+        /// <summary>
+        /// Dispatch an action
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public object Dispatch(object action)
         {
             return _dispatcher(action);
         }
 
+        /// <summary>
+        /// Get the state
+        /// </summary>
+        /// <returns></returns>
         public TState GetState() => _lastState;
 
+        /// <summary>
+        /// Subscribe to change state
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
         public IDisposable Subscribe(IObserver<TState> observer)
         {
             _completedListener += observer.OnCompleted;
@@ -30,10 +47,10 @@ namespace UniRedux
                 _errorListener -= observer.OnError;
                 _nextListener -= observer.OnNext;
             });
-            throw new NotImplementedException();
         }
 
-        public Store(Reducer<TState> reducer, TState initialState = default(TState), params Middleware<TState>[] middlewares)
+        public Store(Reducer<TState> reducer, TState initialState = default(TState),
+            params Middleware<TState>[] middlewares)
         {
             _reducer = reducer;
             _dispatcher = ApplyMiddlewares(middlewares);
@@ -72,6 +89,7 @@ namespace UniRedux
         private class Disposer : IDisposable
         {
             private Action _disposeListener;
+
             public Disposer(Action disposeListener)
             {
                 _disposeListener = disposeListener;
@@ -91,6 +109,7 @@ namespace UniRedux
                     disposedValue = true;
                 }
             }
+
             void IDisposable.Dispose()
             {
                 Dispose(true);

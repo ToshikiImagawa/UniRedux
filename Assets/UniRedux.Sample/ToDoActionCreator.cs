@@ -65,4 +65,20 @@ namespace UniRedux.Sample
     {
         public TodosFilter Filter { get; set; }
     }
+
+    /// <summary>
+    /// Action to toggle completed todo flag
+    /// </summary>
+    public struct UpdateSelectedAllToDoAction
+    {
+        public bool IsSelected { get; set; }
+    }
+
+    /// <summary>
+    /// Remove todo
+    /// </summary>
+    public struct RemoveSelectedTodosAction
+    {
+
+    }
 }

@@ -19,11 +19,6 @@ namespace UniReduxEditor.Sample
         void OnGUI()
         {
             EditorGUILayout.PrefixLabel("StateDisplay:");
-            var style = new GUIStyle(GUI.skin.label)
-            {
-                wordWrap = true
-            };
-            GUILayout.Label(textArea, style);
             EditorStyles.textField.wordWrap = true;
             EditorGUILayout.TextArea(textArea);
 

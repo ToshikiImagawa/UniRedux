@@ -122,7 +122,7 @@ namespace UniRedux.Sample
             {
                 return UpdateSelectedToDoReducer(previousState, (UpdateSelectedToDoAction)action);
             }
-            if (action.GetType() == typeof(UpdateSelectedToDoAction))
+            if (action.GetType() == typeof(UpdateSelectedAllToDoAction))
             {
                 return UpdateSelectedAllToDoReducer(previousState, (UpdateSelectedAllToDoAction)action);
             }

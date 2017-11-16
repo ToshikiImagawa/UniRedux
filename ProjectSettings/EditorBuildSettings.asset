@@ -4,4 +4,7 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/UniRedux.Sample/Scenes/ToDo.unity
+    guid: 5f0ee01598d304e8b8443f5feb5fcf97

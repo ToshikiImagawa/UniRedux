@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;
 
-namespace Editor.UniRedux.Sample.UI
+namespace UniReduxEditor.Sample.UI
 {
     [CustomEditor(typeof(AddToDoButton))]
     public class AddToDoButtonEditor : ButtonEditor

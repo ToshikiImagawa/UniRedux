@@ -1,7 +1,7 @@
 ﻿using System;
 using UniRedux;
 
-namespace Editor.UniRedux
+namespace UniReduxEditor
 {
     [Serializable]
     public class UniReduxTreeElement

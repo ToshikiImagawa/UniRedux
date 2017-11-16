@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Editor.UniRedux.Sample
+namespace UniReduxEditor.Sample
 {
     public class StateTreeDisplay : EditorWindow
     {

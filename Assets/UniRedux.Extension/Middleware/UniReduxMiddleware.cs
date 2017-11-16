@@ -32,9 +32,9 @@ namespace UniRedux
         {
             return next => action =>
             {
-                Debug.Log($"[Redux-Logger] Dispatching : {action.GetType().Name}");
+                Debug.Log($"<color=#8ced57>[Redux-Logger]</color> Dispatching for {action.GetType().Name}: {action}");
                 var result = next(action);
-                Debug.Log($"[Redux-Logger] Next state for {action.GetType().Name} : {store.GetState()}");
+                Debug.Log($"<color=#8ced57>[Redux-Logger]</color> Next state for {action.GetType().Name}: {store.GetState()}");
                 return result;
             };
         }

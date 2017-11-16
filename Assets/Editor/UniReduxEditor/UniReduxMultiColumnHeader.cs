@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEditor.IMGUI.Controls;
-using UnityEngine;
 
-namespace Editor.UniRedux
+namespace UniReduxEditor
 {
     public class UniReduxMultiColumnHeader : MultiColumnHeader
     {

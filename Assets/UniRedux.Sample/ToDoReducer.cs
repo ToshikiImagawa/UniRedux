@@ -20,11 +20,15 @@ namespace UniRedux.Sample
             if (previousState == null) previousState = InitState;
             if (action.GetType() == typeof(ChangeToDosFilterAction))
             {
-                return ChangeToDosFilterReducer(previousState, (ChangeToDosFilterAction) action);
+                return ChangeToDosFilterReducer(previousState, (ChangeToDosFilterAction)action);
             }
             if (action.GetType() == typeof(AddToDoAction))
             {
-                return AddToDoReducer(previousState, (AddToDoAction) action);
+                return AddToDoReducer(previousState, (AddToDoAction)action);
+            }
+            if (action.GetType() == typeof(RemoveSelectedTodosAction))
+            {
+                return RemoveSelectedTodosReducer(previousState, (RemoveSelectedTodosAction)action);
             }
             return new ToDoState()
             {
@@ -60,6 +64,16 @@ namespace UniRedux.Sample
             };
         }
 
+        private static ToDoState RemoveSelectedTodosReducer(ToDoState previousState, RemoveSelectedTodosAction action)
+        {
+            return new ToDoState
+            {
+                Filter = previousState.Filter,
+                NextToDoId = previousState.NextToDoId + 1,
+                ToDos = previousState.ToDos.RemoveAll(toDo => toDo.Selected)
+            };
+        }
+
         /// <summary>
         /// Initial value of State
         /// </summary>
@@ -86,27 +100,31 @@ namespace UniRedux.Sample
         {
             if (action.GetType() == typeof(DeleteToDoAction))
             {
-                return DeleteToDoReducer(previousState, (DeleteToDoAction) action);
+                return DeleteToDoReducer(previousState, (DeleteToDoAction)action);
             }
             if (action.GetType() == typeof(CompleteSelectedTodosAction))
             {
-                return CompleteSelectedTodosReducer(previousState, (CompleteSelectedTodosAction) action);
+                return CompleteSelectedTodosReducer(previousState, (CompleteSelectedTodosAction)action);
             }
             if (action.GetType() == typeof(CompleteAllTodosAction))
             {
-                return CompleteAllTodosReducer(previousState, (CompleteAllTodosAction) action);
+                return CompleteAllTodosReducer(previousState, (CompleteAllTodosAction)action);
             }
             if (action.GetType() == typeof(ToggleCompletedToDoAction))
             {
-                return ToggleToDoReducer(previousState, (ToggleCompletedToDoAction) action);
+                return ToggleToDoReducer(previousState, (ToggleCompletedToDoAction)action);
             }
             if (action.GetType() == typeof(UpdateTextToDoAction))
             {
-                return UpdateTextToDoReducer(previousState, (UpdateTextToDoAction) action);
+                return UpdateTextToDoReducer(previousState, (UpdateTextToDoAction)action);
             }
             if (action.GetType() == typeof(UpdateSelectedToDoAction))
             {
-                return UpdateSelectedToDoReducer(previousState, (UpdateSelectedToDoAction) action);
+                return UpdateSelectedToDoReducer(previousState, (UpdateSelectedToDoAction)action);
+            }
+            if (action.GetType() == typeof(UpdateSelectedAllToDoAction))
+            {
+                return UpdateSelectedAllToDoReducer(previousState, (UpdateSelectedAllToDoAction)action);
             }
 
             return previousState;
@@ -139,6 +157,18 @@ namespace UniRedux.Sample
                 Text = x.Text,
                 Selected = x.Selected,
                 Completed = x.Selected ? action.IsCompleted : x.Completed
+            }).ToImmutableArray();
+        }
+
+        private static ImmutableArray<ToDo> UpdateSelectedAllToDoReducer(ImmutableArray<ToDo> previousState,
+            UpdateSelectedAllToDoAction action)
+        {
+            return previousState.Select(x => new ToDo
+            {
+                Id = x.Id,
+                Text = x.Text,
+                Selected = action.IsSelected,
+                Completed = x.Completed
             }).ToImmutableArray();
         }
 

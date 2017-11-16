@@ -1,7 +1,7 @@
 ﻿using UniRedux;
 using UnityEditor.IMGUI.Controls;
 
-namespace Editor.UniRedux
+namespace UniReduxEditor
 {
     public class UniReduxTreeModel : TreeViewItem
     {

@@ -3,7 +3,7 @@ using UniRedux.Sample;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.UniRedux.Sample
+namespace UniReduxEditor.Sample
 {
     public class StateDisplay : EditorWindow
     {
@@ -19,11 +19,6 @@ namespace Editor.UniRedux.Sample
         void OnGUI()
         {
             EditorGUILayout.PrefixLabel("StateDisplay:");
-            var style = new GUIStyle(GUI.skin.label)
-            {
-                wordWrap = true
-            };
-            GUILayout.Label(textArea, style);
             EditorStyles.textField.wordWrap = true;
             EditorGUILayout.TextArea(textArea);
 

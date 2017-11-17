@@ -21,6 +21,8 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (isStopped) return;
+
                 foreach (var observer in _observerList)
                 {
                     observer.OnCompleted();
@@ -33,10 +35,14 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (isStopped) return;
+
                 foreach (var observer in _observerList)
                 {
                     observer.OnError(error);
                 }
+                isStopped = true;
+                lastError = error;
             }
         }
 
@@ -45,6 +51,8 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (isStopped) return;
+
                 foreach (var observer in _observerList)
                 {
                     observer.OnNext(value);
@@ -68,12 +76,11 @@ namespace UniSystem.Reactive.Subjects
                     _observerList.Add(observer);
                     subscription = new Subscription(this, observer);
                 }
+                ex = lastError;
                 if (_queue != null)
                 {
                     observer.OnNext(_queue);
                 }
-
-                ex = lastError;
             }
 
             if (subscription != null)

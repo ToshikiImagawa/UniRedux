@@ -38,9 +38,25 @@ namespace UniRedux
         /// <returns></returns>
         public IDisposable Subscribe(IObserver<TState> observer)
         {
+            _completedListener -= observer.OnCompleted;
+            _errorListener -= observer.OnError;
+            _nextListener -= observer.OnNext;
             _completedListener += observer.OnCompleted;
             _errorListener += observer.OnError;
             _nextListener += observer.OnNext;
+
+            var isError = false;
+            try
+            {
+                if (_lastState != null) observer.OnNext(_lastState);
+            }
+            catch (Exception e)
+            {
+                observer.OnError(e);
+                isError = true;
+            }
+            if (!isError) observer.OnCompleted();
+
             return new Disposer(() =>
             {
                 _completedListener -= observer.OnCompleted;
@@ -86,28 +102,25 @@ namespace UniRedux
             return action;
         }
 
-        private class Disposer : IDisposable
+        private sealed class Disposer : IDisposable
         {
-            private Action _disposeListener;
+            private readonly Action _disposeListener;
+            private bool _disposedValue = false;
 
             public Disposer(Action disposeListener)
             {
                 _disposeListener = disposeListener;
             }
 
-            private bool disposedValue = false;
-
-            protected virtual void Dispose(bool disposing)
+            private void Dispose(bool disposing)
             {
-                if (!disposedValue)
+                if (_disposedValue) return;
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        _disposeListener?.Invoke();
-                    }
-
-                    disposedValue = true;
+                    _disposeListener?.Invoke();
                 }
+
+                _disposedValue = true;
             }
 
             void IDisposable.Dispose()

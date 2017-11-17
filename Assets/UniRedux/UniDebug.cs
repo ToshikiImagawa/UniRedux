@@ -22,7 +22,7 @@ namespace UniRedux
                 : string.Join(",", element.Children.Select(ToJson).ToArray());
 
             return "{" +
-                   $"\"Name\" : \"{element.Name}\", \"Value\" : \"{element.Value}\", \"Children\" : [{childrenText}], \"TypeName\" : \"{element.TypeName}\", \"Type\" : \"{element.Type}\"" +
+                   $"\"Name\" : \"{element.Name}\", \"Value\" : \"{element.Value}\", \"Children\" : [{childrenText}], \"TypeName\" : \"{element.Type}\", \"Type\" : \"{element.ObjectType}\"" +
                    "}";
         }
 
@@ -40,8 +40,8 @@ namespace UniRedux
             {
                 Name = $"{state.GetType().Name}State",
                 Value = "",
-                TypeName = state.GetType().FullName,
-                Type = StateType.Object,
+                Type = state.GetType(),
+                ObjectType = ObjectType.Object,
                 Children = GetChildren(state)
             };
         }
@@ -100,8 +100,8 @@ namespace UniRedux
                     {
                         Name = $"{index}",
                         Value = $"{type.Name}[]",
-                        TypeName = type.FullName,
-                        Type = StateType.Array,
+                        Type = type,
+                        ObjectType = ObjectType.Array,
                         Children = GetChildren(value as IEnumerable, isProperty)
                     });
                 }
@@ -111,8 +111,8 @@ namespace UniRedux
                     {
                         Name = $"{index}",
                         Value = "",
-                        TypeName = type.FullName,
-                        Type = StateType.Object,
+                        Type = type,
+                        ObjectType = ObjectType.Object,
                         Children = GetChildren(value, isProperty)
                     });
                 }
@@ -122,8 +122,8 @@ namespace UniRedux
                     {
                         Name = $"{index}",
                         Value = $"{value}",
-                        TypeName = type.FullName,
-                        Type = StateType.Value,
+                        Type = type,
+                        ObjectType = ObjectType.Value,
                         Children = Util.Empty<SerializableStateElement>()
                     });
                 }
@@ -146,8 +146,8 @@ namespace UniRedux
             {
                 Name = name,
                 Value = isArray ? $"{type.Name}[]" : isValueType ? $"{value}" : "",
-                TypeName = type.FullName,
-                Type = isArray ? StateType.Array : isValueType ? StateType.Value : StateType.Object,
+                Type = type,
+                ObjectType = isArray ? ObjectType.Array : isValueType ? ObjectType.Value : ObjectType.Object,
                 Children = Util.Empty<SerializableStateElement>()
             };
 
@@ -170,11 +170,11 @@ namespace UniRedux
         public string Name;
         public string Value;
         public SerializableStateElement[] Children;
-        public string TypeName;
-        public StateType Type;
+        public Type Type;
+        public ObjectType ObjectType;
     }
 
-    public enum StateType
+    public enum ObjectType
     {
         Value = 0,
         Array = 1,

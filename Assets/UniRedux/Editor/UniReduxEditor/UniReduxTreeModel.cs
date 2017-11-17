@@ -1,4 +1,5 @@
-﻿using UniRedux;
+﻿using System;
+using UniRedux;
 using UnityEditor.IMGUI.Controls;
 
 namespace UniReduxEditor
@@ -7,10 +8,9 @@ namespace UniReduxEditor
     {
         public UniReduxTreeElement Element { get; set; }
 
-        public UniReduxTreeModel(int id, string name, string typeName, string value, StateType type, int depth)
-            : base(id, depth, name)
+        public UniReduxTreeModel(int id, string name, Type type, string value, ObjectType objectType, int depth) : base(id, depth, name)
         {
-            Element = new UniReduxTreeElement(id, name, typeName, value, type, depth);
+            Element = new UniReduxTreeElement(id, name, type, value, objectType, depth);
         }
     }
 }

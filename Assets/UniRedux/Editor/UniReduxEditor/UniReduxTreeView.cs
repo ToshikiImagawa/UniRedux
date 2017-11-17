@@ -91,14 +91,23 @@ namespace UniReduxEditor
                     spaceRect.x += uniReduxTreeModel.Element.StateDepth * 18f + 20;
                     EditorGUI.LabelField(spaceRect, uniReduxTreeModel.Element.StateName, EditorStyles.largeLabel);
                     break;
-                case ColumnIndex.StateTypeName:
-                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateTypeName, EditorStyles.label);
+                case ColumnIndex.StateType:
+                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateType.Name, EditorStyles.label);
                     break;
                 case ColumnIndex.StateValue:
-                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateValue, EditorStyles.textField);
+                    if (string.IsNullOrEmpty(uniReduxTreeModel.Element.StateValue)) break;
+                    if (uniReduxTreeModel.Element.ObjectType == ObjectType.Array)
+                    {
+                        EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateValue, EditorStyles.label);
+                    }
+                    else
+                    {
+                        EditorGUI.SelectableLabel(cellRect, uniReduxTreeModel.Element.StateValue, EditorStyles.textField);
+                    }
                     break;
-                case ColumnIndex.StateType:
-                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateType.ToString(), EditorStyles.toolbarPopup);
+                case ColumnIndex.StateObjectType:
+                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.ObjectType.ToString(),
+                        EditorStyles.toolbarPopup);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -130,7 +139,7 @@ namespace UniReduxEditor
 
         private TreeViewItem CreateTreeViewItem(SerializableStateElement element, int depth = 0)
         {
-            var item = new UniReduxTreeModel(Id, element.Name, element.TypeName, element.Value, element.Type, depth);
+            var item = new UniReduxTreeModel(Id, element.Name, element.Type, element.Value, element.ObjectType, depth);
             var items =
                 element.Children.Select(childrenElement => CreateTreeViewItem(childrenElement, depth + 1)).ToList();
             item.children = items;
@@ -169,14 +178,14 @@ namespace UniReduxEditor
                 case ColumnIndex.StateName:
                     orderedEnumerable = items.OrderBy(item => item.Element.StateName);
                     break;
-                case ColumnIndex.StateType:
-                    orderedEnumerable = items.OrderBy(item => item.Element.StateType);
+                case ColumnIndex.StateObjectType:
+                    orderedEnumerable = items.OrderBy(item => item.Element.ObjectType);
                     break;
                 case ColumnIndex.StateValue:
                     orderedEnumerable = items.OrderBy(item => item.Element.StateValue);
                     break;
-                case ColumnIndex.StateTypeName:
-                    orderedEnumerable = items.OrderBy(item => item.Element.StateTypeName);
+                case ColumnIndex.StateType:
+                    orderedEnumerable = items.OrderBy(item => item.Element.StateType);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -194,8 +203,8 @@ namespace UniReduxEditor
     {
         Id,
         StateName,
-        StateTypeName,
+        StateType,
         StateValue,
-        StateType
+        StateObjectType
     }
 }

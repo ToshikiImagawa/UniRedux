@@ -33,11 +33,11 @@ namespace UniRedux.Sample
 
         public void Init(int toDoId)
         {
+            Dispose();
             _toDoId = toDoId;
             ToDoTitle.text = "??????????";
             ToDoSelectToggle.Init(toDoId);
             CompleteButton.Init(toDoId);
-            _disposable?.Dispose();
             _disposable = ToDoSelector.FilterToDoElements(toDoId).Subscribe(this);
         }
 
@@ -45,6 +45,7 @@ namespace UniRedux.Sample
         {
             _disposable?.Dispose();
             _disposable = null;
+            _toDoId = -1;
         }
 
         public void OnCompleted()

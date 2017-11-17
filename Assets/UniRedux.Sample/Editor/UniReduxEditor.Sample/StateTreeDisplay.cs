@@ -15,7 +15,7 @@ namespace UniReduxEditor.Sample
         [SerializeField] MultiColumnHeaderState _mMultiColumnHeaderState;
         private SearchField _searchField;
 
-        [MenuItem("UniRedux/StateTreeDisplay open")]
+        [MenuItem("UniRedux/ToDoList/StateTreeDisplay open")]
         private static void Open()
         {
             GetWindow<StateTreeDisplay>();

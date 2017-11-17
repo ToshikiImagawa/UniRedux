@@ -9,7 +9,7 @@ namespace UniReduxEditor.Sample
     {
         private string textArea;
 
-        [MenuItem("UniRedux/StateDisplay open")]
+        [MenuItem("UniRedux/ToDoList/StateDisplay open")]
         static void Init()
         {
             StateDisplay window = (StateDisplay) GetWindow(typeof(StateDisplay));

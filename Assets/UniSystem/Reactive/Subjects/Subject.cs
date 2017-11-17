@@ -62,9 +62,9 @@ namespace UniSystem.Reactive.Subjects
     {
         private readonly object _observerLock = new object();
 
-        private bool isStopped;
-        private bool isDisposed;
-        private Exception lastError;
+        private bool _isStopped;
+        private bool _isDisposed;
+        private Exception _lastError;
 
         private readonly List<IObserver<T>> _observerList = new List<IObserver<T>>();
 
@@ -73,10 +73,12 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (_isStopped) return;
                 foreach (var observer in _observerList)
                 {
                     observer.OnCompleted();
                 }
+                _isStopped = true;
             }
         }
 
@@ -85,10 +87,13 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (_isStopped) return;
                 foreach (var observer in _observerList)
                 {
                     observer.OnError(error);
                 }
+                _isStopped = true;
+                _lastError = error;
             }
         }
 
@@ -97,6 +102,7 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
+                if (_isStopped) return;
                 foreach (var observer in _observerList)
                 {
                     observer.OnNext(value);
@@ -113,13 +119,13 @@ namespace UniSystem.Reactive.Subjects
             lock (_observerLock)
             {
                 ThrowIfDisposed();
-                if (!isStopped)
+                if (!_isStopped)
                 {
                     _observerList.Add(observer);
                     return new Subscription(this, observer);
                 }
 
-                ex = lastError;
+                ex = _lastError;
             }
 
             if (ex != null)
@@ -138,14 +144,14 @@ namespace UniSystem.Reactive.Subjects
         {
             lock (_observerLock)
             {
-                isDisposed = true;
+                _isDisposed = true;
                 _observerList.Clear();
             }
         }
 
         private void ThrowIfDisposed()
         {
-            if (isDisposed) throw new ObjectDisposedException("");
+            if (_isDisposed) throw new ObjectDisposedException("");
         }
 
         private class Subscription : IDisposable

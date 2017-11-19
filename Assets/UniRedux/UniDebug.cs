@@ -81,28 +81,30 @@ namespace UniRedux
             return stateElementList.ToArray();
         }
 
-        private static SerializableStateElement[] GetChildren(IEnumerable values, bool isProperty)
+        private static SerializableStateElement[] GetChildren(IEnumerable values, ref Type collectionType, bool isProperty)
         {
             if (values == null) return Util.Empty<SerializableStateElement>();
             var stateElementList = new List<SerializableStateElement>();
             var index = 0;
             foreach (var value in values)
             {
-                var type = value.GetType();
+                if (index == 0) collectionType = value.GetType();
 
-                var isValueType = type.IsValueType || value is string;
-                var isArray = value.GetType().IsArray || value is IEnumerable;
+                var isValueType = collectionType.IsValueType || value is string;
+                var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
                 if (value is string) isArray = false;
 
                 if (isArray)
                 {
+                    var childrenCollectionType = collectionType;
+                    var children = GetChildren(value as IEnumerable, ref childrenCollectionType, isProperty);
                     stateElementList.Add(new SerializableStateElement
                     {
                         Name = $"{index}",
-                        Value = $"{type.Name}[]",
-                        Type = type,
+                        Value = $"{childrenCollectionType.Name}[]",
+                        Type = collectionType,
                         ObjectType = ObjectType.Array,
-                        Children = GetChildren(value as IEnumerable, isProperty)
+                        Children = children
                     });
                 }
                 else if (!isValueType)
@@ -111,7 +113,7 @@ namespace UniRedux
                     {
                         Name = $"{index}",
                         Value = "",
-                        Type = type,
+                        Type = collectionType,
                         ObjectType = ObjectType.Object,
                         Children = GetChildren(value, isProperty)
                     });
@@ -121,8 +123,8 @@ namespace UniRedux
                     stateElementList.Add(new SerializableStateElement
                     {
                         Name = $"{index}",
-                        Value = $"{value}",
-                        Type = type,
+                        Value = value,
+                        Type = collectionType,
                         ObjectType = ObjectType.Value,
                         Children = Util.Empty<SerializableStateElement>()
                     });
@@ -139,13 +141,13 @@ namespace UniRedux
             var type = value.GetType();
 
             var isValueType = type.IsValueType || value is string;
-            var isArray = value.GetType().IsArray || value is IEnumerable;
+            var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
             if (value is string) isArray = false;
 
             var element = new SerializableStateElement
             {
                 Name = name,
-                Value = isArray ? $"{type.Name}[]" : isValueType ? $"{value}" : "",
+                Value = isArray ? $"{type.Name}[]" : isValueType ? value : "",
                 Type = type,
                 ObjectType = isArray ? ObjectType.Array : isValueType ? ObjectType.Value : ObjectType.Object,
                 Children = Util.Empty<SerializableStateElement>()
@@ -153,7 +155,9 @@ namespace UniRedux
 
             if (isArray)
             {
-                element.Children = GetChildren(value as IEnumerable, isProperty);
+                Type collectionType = type;
+                element.Children = GetChildren(value as IEnumerable,ref collectionType, isProperty);
+                element.Value = $"{collectionType.Name}[]";
             }
             else if (!isValueType)
             {
@@ -168,7 +172,7 @@ namespace UniRedux
     public class SerializableStateElement
     {
         public string Name;
-        public string Value;
+        public object Value;
         public SerializableStateElement[] Children;
         public Type Type;
         public ObjectType ObjectType;

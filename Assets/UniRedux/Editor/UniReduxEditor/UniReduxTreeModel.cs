@@ -8,7 +8,7 @@ namespace UniReduxEditor
     {
         public UniReduxTreeElement Element { get; set; }
 
-        public UniReduxTreeModel(int id, string name, Type type, string value, ObjectType objectType, int depth) : base(id, depth, name)
+        public UniReduxTreeModel(int id, string name, Type type, object value, ObjectType objectType, int depth) : base(id, depth, name)
         {
             Element = new UniReduxTreeElement(id, name, type, value, objectType, depth);
         }

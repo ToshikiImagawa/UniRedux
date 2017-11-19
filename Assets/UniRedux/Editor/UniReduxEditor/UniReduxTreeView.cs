@@ -35,7 +35,7 @@ namespace UniReduxEditor
             : base(state, multiColumnHeader)
         {
             rowHeight = 32;
-            columnIndexForTreeFoldouts = 1;
+            columnIndexForTreeFoldouts = 2;
             showBorder = true;
             customFoldoutYOffset = (rowHeight - EditorGUIUtility.singleLineHeight) * 0.5f;
             extraSpaceBeforeIconAndLabel = 20;
@@ -74,7 +74,7 @@ namespace UniReduxEditor
             }
 
             return uniReduxTreeModel.Element.StateName.Contains(search)
-                   | uniReduxTreeModel.Element.StateValue.Contains(search);
+                   | $"{uniReduxTreeModel.Element.StateValue}".Contains(search);
         }
 
         private void CellGUI(Rect cellRect, UniReduxTreeModel uniReduxTreeModel, ColumnIndex columnIndex,
@@ -95,19 +95,54 @@ namespace UniReduxEditor
                     EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateType.Name, EditorStyles.label);
                     break;
                 case ColumnIndex.StateValue:
-                    if (string.IsNullOrEmpty(uniReduxTreeModel.Element.StateValue)) break;
                     if (uniReduxTreeModel.Element.ObjectType == ObjectType.Array)
                     {
-                        EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateValue, EditorStyles.label);
+                        EditorGUI.LabelField(cellRect, $"{uniReduxTreeModel.Element.StateValue}", EditorStyles.label);
                     }
-                    else
+                    else if (uniReduxTreeModel.Element.ObjectType == ObjectType.Value)
                     {
-                        EditorGUI.SelectableLabel(cellRect, uniReduxTreeModel.Element.StateValue, EditorStyles.textField);
+                        if (uniReduxTreeModel.Element.StateType.IsEnum)
+                        {
+                            EditorGUI.SelectableLabel(cellRect, $"{uniReduxTreeModel.Element.StateValue}", EditorStyles.popup);
+                        }
+                        else
+                        {
+                            switch (Type.GetTypeCode(uniReduxTreeModel.Element.StateType))
+                            {
+                                case TypeCode.Int32:
+                                    var intValue = Convert.ToInt32(uniReduxTreeModel.Element.StateValue);
+                                    EditorGUI.SelectableLabel(cellRect, $"{intValue}", EditorStyles.textField);
+                                    break;
+                                case TypeCode.String:
+                                    EditorGUI.SelectableLabel(cellRect, $"{uniReduxTreeModel.Element.StateValue}", EditorStyles.textField);
+                                    break;
+                                case TypeCode.Boolean:
+                                    var flag = Convert.ToBoolean(uniReduxTreeModel.Element.StateValue);
+                                    Rect toggleRect = cellRect;
+                                    toggleRect.width = 18;
+                                    using (new BackgroundColorScope(flag ? Color.green : Color.red))
+                                    {
+                                        EditorGUI.Toggle(toggleRect, flag, EditorStyles.radioButton);
+                                    }
+                                    break;
+                                case TypeCode.Double:
+                                    var doubleValue = Convert.ToDouble(uniReduxTreeModel.Element.StateValue);
+                                    EditorGUI.SelectableLabel(cellRect, $"{doubleValue}", EditorStyles.textField);
+                                    break;
+                                case TypeCode.DateTime:
+                                default:
+                                    EditorGUI.SelectableLabel(cellRect, $"{uniReduxTreeModel.Element.StateValue}", EditorStyles.textField);
+                                    break;
+                            }
+                        }
                     }
                     break;
                 case ColumnIndex.StateObjectType:
-                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.ObjectType.ToString(),
-                        EditorStyles.toolbarPopup);
+                    var pass = $"UniRedux/icon_{uniReduxTreeModel.Element.ObjectType.ToString()}.png";
+                    var texture = EditorGUIUtility.Load(pass) as Texture;
+                    var textureRect = cellRect;
+                    textureRect.width = textureRect.height;
+                    GUI.DrawTexture(cellRect, texture, ScaleMode.ScaleToFit);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -124,9 +159,25 @@ namespace UniReduxEditor
                 return;
             }
 
+            var backgroundColor = GUI.backgroundColor;
+            switch (uniReduxTreeModel.Element.ObjectType)
+            {
+                case ObjectType.Array:
+                    backgroundColor = Color.blue;
+                    break;
+                case ObjectType.Object:
+                    backgroundColor = Color.yellow;
+                    break;
+                default:
+                    break;
+            }
+            using (new BackgroundColorScope(backgroundColor))
+            {
+                GUI.Box(args.rowRect, "");
+            }
             for (var index = 0; index < args.GetNumVisibleColumns(); index++)
             {
-                CellGUI(args.GetCellRect(index), uniReduxTreeModel, (ColumnIndex) args.GetColumn(index), ref args);
+                CellGUI(args.GetCellRect(index), uniReduxTreeModel, (ColumnIndex)args.GetColumn(index), ref args);
             }
         }
 
@@ -149,7 +200,7 @@ namespace UniReduxEditor
         private void SortItems(MultiColumnHeader multiColumnHeader)
         {
             SessionState.SetInt(SortedColumnIndexStateKey, multiColumnHeader.sortedColumnIndex);
-            var index = (ColumnIndex) multiColumnHeader.sortedColumnIndex;
+            var index = (ColumnIndex)multiColumnHeader.sortedColumnIndex;
             var ascending = multiColumnHeader.IsSortedAscending(multiColumnHeader.sortedColumnIndex);
 
             if (rootItem != null)
@@ -202,9 +253,24 @@ namespace UniReduxEditor
     public enum ColumnIndex
     {
         Id,
+        StateObjectType,
         StateName,
-        StateType,
         StateValue,
-        StateObjectType
+        StateType
+    }
+
+    public class BackgroundColorScope : GUI.Scope
+    {
+        private readonly Color color;
+        public BackgroundColorScope(Color color)
+        {
+            this.color = GUI.backgroundColor;
+            GUI.backgroundColor = color;
+        }
+
+        protected override void CloseScope()
+        {
+            GUI.backgroundColor = color;
+        }
     }
 }

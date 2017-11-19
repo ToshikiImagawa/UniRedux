@@ -12,7 +12,7 @@ namespace UniReduxEditor
             width = minWidth = 100;
             maxWidth = 500;
             autoResize = true;
-            headerContent = new GUIContent("StateTypeName");
+            headerContent = new GUIContent("StateType");
             sortingArrowAlignment = TextAlignment.Left;
             allowToggleVisibility = true;
         }

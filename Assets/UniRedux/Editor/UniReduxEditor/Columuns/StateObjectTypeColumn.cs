@@ -9,9 +9,9 @@ namespace UniReduxEditor
 
         public StateObjectTypeColumn()
         {
-            width = minWidth = maxWidth = 100;
+            width = minWidth = maxWidth = 32;
             autoResize = true;
-            headerContent = new GUIContent("StateType");
+            headerContent = new GUIContent("");
             sortingArrowAlignment = TextAlignment.Left;
             allowToggleVisibility = true;
         }

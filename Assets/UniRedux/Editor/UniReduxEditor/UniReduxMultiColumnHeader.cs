@@ -20,9 +20,6 @@ namespace UniReduxEditor
                     case ColumnIndex.StateName:
                         columns.Add(new StateNameColum());
                         break;
-                    case ColumnIndex.StateObjectType:
-                        columns.Add(new StateObjectTypeColumn());
-                        break;
                     case ColumnIndex.StateValue:
                         columns.Add(new StateValueColumn());
                         break;

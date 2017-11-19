@@ -35,7 +35,7 @@ namespace UniReduxEditor
             : base(state, multiColumnHeader)
         {
             rowHeight = 32;
-            columnIndexForTreeFoldouts = 2;
+            columnIndexForTreeFoldouts = 1;
             showBorder = true;
             customFoldoutYOffset = (rowHeight - EditorGUIUtility.singleLineHeight) * 0.5f;
             extraSpaceBeforeIconAndLabel = 20;
@@ -89,6 +89,12 @@ namespace UniReduxEditor
                 case ColumnIndex.StateName:
                     var spaceRect = cellRect;
                     spaceRect.x += uniReduxTreeModel.Element.StateDepth * 18f + 20;
+                    var pass = $"UniRedux/icon_{uniReduxTreeModel.Element.ObjectType.ToString()}.png";
+                    var texture = EditorGUIUtility.Load(pass) as Texture;
+                    var textureRect = spaceRect;
+                    textureRect.width = textureRect.height;
+                    spaceRect.x += textureRect.width + 5;
+                    GUI.DrawTexture(textureRect, texture, ScaleMode.ScaleToFit);
                     EditorGUI.LabelField(spaceRect, uniReduxTreeModel.Element.StateName, EditorStyles.largeLabel);
                     break;
                 case ColumnIndex.StateType:
@@ -137,13 +143,6 @@ namespace UniReduxEditor
                         }
                     }
                     break;
-                case ColumnIndex.StateObjectType:
-                    var pass = $"UniRedux/icon_{uniReduxTreeModel.Element.ObjectType.ToString()}.png";
-                    var texture = EditorGUIUtility.Load(pass) as Texture;
-                    var textureRect = cellRect;
-                    textureRect.width = textureRect.height;
-                    GUI.DrawTexture(cellRect, texture, ScaleMode.ScaleToFit);
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -173,11 +172,10 @@ namespace UniReduxEditor
             }
             using (new BackgroundColorScope(backgroundColor))
             {
-                GUI.Box(args.rowRect, "");
-            }
-            for (var index = 0; index < args.GetNumVisibleColumns(); index++)
-            {
-                CellGUI(args.GetCellRect(index), uniReduxTreeModel, (ColumnIndex)args.GetColumn(index), ref args);
+                for (var index = 0; index < args.GetNumVisibleColumns(); index++)
+                {
+                    CellGUI(args.GetCellRect(index), uniReduxTreeModel, (ColumnIndex)args.GetColumn(index), ref args);
+                }
             }
         }
 
@@ -229,9 +227,6 @@ namespace UniReduxEditor
                 case ColumnIndex.StateName:
                     orderedEnumerable = items.OrderBy(item => item.Element.StateName);
                     break;
-                case ColumnIndex.StateObjectType:
-                    orderedEnumerable = items.OrderBy(item => item.Element.ObjectType);
-                    break;
                 case ColumnIndex.StateValue:
                     orderedEnumerable = items.OrderBy(item => item.Element.StateValue);
                     break;
@@ -253,7 +248,6 @@ namespace UniReduxEditor
     public enum ColumnIndex
     {
         Id,
-        StateObjectType,
         StateName,
         StateValue,
         StateType

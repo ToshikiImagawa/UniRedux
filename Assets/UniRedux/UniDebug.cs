@@ -34,7 +34,7 @@ namespace UniRedux
 
     public static class StateReflection
     {
-        public static SerializableStateElement Serialize<TState>(TState state)
+        public static SerializableStateElement Serialize<TState>(TState state, bool isProperty = true)
         {
             return new SerializableStateElement
             {
@@ -42,11 +42,11 @@ namespace UniRedux
                 Value = "",
                 Type = state.GetType(),
                 ObjectType = ObjectType.Object,
-                Children = GetChildren(state)
+                Children = GetChildren(state, isProperty)
             };
         }
 
-        private static SerializableStateElement[] GetChildren(object obj, bool isProperty = true)
+        private static SerializableStateElement[] GetChildren(object obj, bool isProperty)
         {
             if (obj == null) return Util.Empty<SerializableStateElement>();
             var stateElementList = new List<SerializableStateElement>();
@@ -62,8 +62,9 @@ namespace UniRedux
                 {
                     var name = propertyInfo.Name;
                     var value = propertyInfo.GetValue(obj);
+                    var type = propertyInfo.PropertyType;
 
-                    AddSerializableStateElement(name, value, stateElementList.Add, true);
+                    AddSerializableStateElement(name, value, type, stateElementList.Add, true);
                 }
             }
             else
@@ -73,8 +74,9 @@ namespace UniRedux
                 {
                     var name = targetField.Name;
                     var value = targetField.GetValue(obj);
+                    var type = targetField.FieldType;
 
-                    AddSerializableStateElement(name, value, stateElementList.Add, false);
+                    AddSerializableStateElement(name, value, type, stateElementList.Add, false);
                 }
             }
 
@@ -134,12 +136,10 @@ namespace UniRedux
             return stateElementList.ToArray();
         }
 
-        private static void AddSerializableStateElement(string name, object value,
+        private static void AddSerializableStateElement(string name, object value,Type type,
             Action<SerializableStateElement> listAddAction,
             bool isProperty)
         {
-            var type = value.GetType();
-
             var isValueType = type.IsValueType || value is string;
             var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
             if (value is string) isArray = false;

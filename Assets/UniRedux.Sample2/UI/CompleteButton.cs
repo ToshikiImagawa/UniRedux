@@ -1,20 +1,13 @@
-﻿using UnityEngine.UI;
+﻿using UniRedux.Sample;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UniRedux.Sample.UI
+namespace UniRedux.Sample2.UI
 {
     public class CompleteButton : Button
-
     {
+        [SerializeField] private ToDoScriptableStore _toDoScriptableStore;
         private int _toDoId = -1;
-
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
-
 
         public void Init(int toDoId)
         {
@@ -32,7 +25,7 @@ namespace UniRedux.Sample.UI
         {
             if (_toDoId < 0) return;
 
-            ToDoApplication.CurrentStore.Dispatch(new ToggleCompletedToDoAction
+            _toDoScriptableStore?.Dispatch(new ToggleCompletedToDoAction
             {
                 ToDoId = _toDoId
             });

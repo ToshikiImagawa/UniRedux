@@ -26,9 +26,9 @@ namespace UniRedux
                    "}";
         }
 
-        public static SerializableStateElement ToSerialize<TState>(this TState state) where TState : class
+        public static SerializableStateElement ToSerialize<TState>(this TState state, bool isProperty = true) where TState : class
         {
-            return StateReflection.Serialize(state);
+            return StateReflection.Serialize(state, isProperty);
         }
     }
 

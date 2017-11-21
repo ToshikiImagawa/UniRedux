@@ -7,20 +7,20 @@ namespace UniReduxEditor.Sample
 {
     public class StateDisplay : EditorWindow
     {
-        private string textArea;
+        private string toDoStateJson;
 
         [MenuItem("UniRedux/ToDoList/StateDisplay open")]
-        static void Init()
+        private static void Init()
         {
-            StateDisplay window = (StateDisplay) GetWindow(typeof(StateDisplay));
+            var window = (StateDisplay) GetWindow(typeof(StateDisplay));
             window.Show();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             EditorGUILayout.PrefixLabel("StateDisplay:");
             EditorStyles.textField.wordWrap = true;
-            EditorGUILayout.TextArea(textArea);
+            EditorGUILayout.SelectableLabel(toDoStateJson, EditorStyles.textArea, GUILayout.ExpandHeight(true));
 
             if (GUILayout.Button("Display"))
                 Display();
@@ -36,12 +36,12 @@ namespace UniReduxEditor.Sample
                 var toDoState = ToDoApplication.CurrentStore.GetState();
                 if (toDoState != null)
                 {
-                    textArea = toDoState.ToJson();
+                    toDoStateJson = toDoState.ToJson();
                 }
             }
             catch
             {
-                textArea = string.Empty;
+                toDoStateJson = string.Empty;
             }
         }
     }

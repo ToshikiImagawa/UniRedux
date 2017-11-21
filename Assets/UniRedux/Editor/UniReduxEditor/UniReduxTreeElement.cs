@@ -8,18 +8,18 @@ namespace UniReduxEditor
     {
         public int StateId;
         public string StateName;
-        public string StateTypeName;
-        public string StateValue;
-        public StateType StateType;
+        public Type StateType;
+        public object StateValue;
+        public ObjectType ObjectType;
         public int StateDepth;
 
-        public UniReduxTreeElement(int id, string name, string typeName, string value, StateType type, int depth)
+        public UniReduxTreeElement(int id, string name, Type type, object value, ObjectType objectType, int depth)
         {
             StateId = id;
             StateName = name;
-            StateTypeName = typeName;
-            StateValue = value;
             StateType = type;
+            StateValue = value;
+            ObjectType = objectType;
             StateDepth = depth;
         }
     }

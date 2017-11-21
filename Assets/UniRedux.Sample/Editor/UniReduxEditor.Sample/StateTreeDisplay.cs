@@ -12,7 +12,6 @@ namespace UniReduxEditor.Sample
         private TreeViewState _state;
         private UniReduxTreeView _treeView;
         private UniReduxMultiColumnHeader _header;
-        [SerializeField] MultiColumnHeaderState _mMultiColumnHeaderState;
         private SearchField _searchField;
 
         [MenuItem("UniRedux/ToDoList/StateTreeDisplay open")]

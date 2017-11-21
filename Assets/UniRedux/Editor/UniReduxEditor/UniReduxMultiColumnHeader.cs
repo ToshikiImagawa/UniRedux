@@ -20,14 +20,11 @@ namespace UniReduxEditor
                     case ColumnIndex.StateName:
                         columns.Add(new StateNameColum());
                         break;
-                    case ColumnIndex.StateType:
-                        columns.Add(new StateTypeColumn());
-                        break;
                     case ColumnIndex.StateValue:
                         columns.Add(new StateValueColumn());
                         break;
-                    case ColumnIndex.StateTypeName:
-                        columns.Add(new StateTypeNameColumn());
+                    case ColumnIndex.StateType:
+                        columns.Add(new StateTypeColumn());
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace UniReduxEditor
 {
-    public class StateNameColum : MultiColumnHeaderState.Column, IHasColumnIndex
+    public class StateNameColumn : MultiColumnHeaderState.Column, IHasColumnIndex
     {
         public ColumnIndex Index { get; } = ColumnIndex.StateName;
 
-        public StateNameColum()
+        public StateNameColumn()
         {
-            width = minWidth = 150;
+            width = minWidth = 100;
             maxWidth = 500;
             autoResize = true;
             headerContent = new GUIContent("StateName");

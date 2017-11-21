@@ -15,16 +15,19 @@ namespace UniReduxEditor
                 switch (value)
                 {
                     case ColumnIndex.Id:
-                        columns.Add(new IdColum());
+                        columns.Add(new IdColumn());
                         break;
                     case ColumnIndex.StateName:
-                        columns.Add(new StateNameColum());
+                        columns.Add(new StateNameColumn());
                         break;
                     case ColumnIndex.StateValue:
                         columns.Add(new StateValueColumn());
                         break;
                     case ColumnIndex.StateType:
                         columns.Add(new StateTypeColumn());
+                        break;
+                    case ColumnIndex.Button:
+                        columns.Add(new ButtonColumn());
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

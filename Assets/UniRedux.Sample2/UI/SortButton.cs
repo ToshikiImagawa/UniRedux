@@ -1,28 +1,22 @@
-﻿using UnityEngine;
+﻿using UniRedux.Sample;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample.UI
+namespace UniRedux.Sample2.UI
 {
     public class SortButton : Button
     {
+        [SerializeField] private ToDoScriptableStore _toDoScriptableStore;
         [SerializeField] private TodosFilter _filterType;
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
 
         private void Run()
         {
             DispachAction();
         }
 
-
         private void DispachAction()
         {
-            ToDoApplication.CurrentStore.Dispatch(new ChangeToDosFilterAction
+            _toDoScriptableStore?.Dispatch(new ChangeToDosFilterAction
             {
                 Filter = _filterType
             });

@@ -1,19 +1,14 @@
-﻿using UnityEngine;
+﻿using UniRedux.Sample;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample.UI
+namespace UniRedux.Sample2.UI
 {
     public class OptionButton : Button
     {
+        [SerializeField] private ToDoScriptableStore _toDoScriptableStore;
         [SerializeField] private OptionType _optionType;
         bool _toggle = true;
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
 
         private void Run()
         {
@@ -42,13 +37,10 @@ namespace UniRedux.Sample.UI
                     break;
             }
 
-            if(action != null)
-            {
-                ToDoApplication.CurrentStore.Dispatch(action);
-                _toggle = !_toggle;
-            }
+            if (action == null) return;
+            _toDoScriptableStore?.Dispatch(action);
+            _toggle = !_toggle;
         }
-
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
         {
             Run();

@@ -19,29 +19,28 @@ namespace UniRedux.Sample
 
         public void OnCompleted()
         {
-            var toDoIdQeue = new Queue<int>(_toDoIds);
-            foreach (var toDoElement in _toDoElementObjectList)
+            if (_toDoIds.Length < _toDoElementObjectList.Count)
             {
-                if (toDoIdQeue.Count > 0)
+                for (var i = _toDoElementObjectList.Count - 1; i >= _toDoIds.Length; i--)
                 {
-                    toDoElement.gameObject.SetActive(true);
-                    var toDoId = toDoIdQeue.Dequeue();
-
-                    if(toDoElement.ToDoId != toDoId) toDoElement.Init(toDoId);
-                }
-                else
-                {
+                    var toDoElement = _toDoElementObjectList[i];
                     toDoElement.Dispose();
                     toDoElement.gameObject.SetActive(false);
                 }
             }
-            while (toDoIdQeue.Count>0)
+            while (_toDoIds.Length > _toDoElementObjectList.Count)
             {
-                var toDoId = toDoIdQeue.Dequeue();
                 var toDoElement = Instantiate(_toDoElementPrefab);
                 toDoElement.transform.SetParent(ScrollRect.content.transform, false);
                 _toDoElementObjectList.Add(toDoElement);
-                if (toDoElement.ToDoId != toDoId) toDoElement.Init(toDoId);
+            }
+            for (var i = 0; i < _toDoIds.Length; i++)
+            {
+                var toDoElement = _toDoElementObjectList[i];
+                var toDoId = _toDoIds[i];
+
+                toDoElement.gameObject.SetActive(true);
+                toDoElement.Init(toDoId);
             }
         }
 

@@ -13,6 +13,7 @@ namespace UniReduxEditor.Sample2
         private UniReduxTreeView _treeView;
         private UniReduxMultiColumnHeader _header;
         private SearchField _searchField;
+        private IDisposable _disposable;
 
         private ToDoScriptableStore _scriptableStore;
 
@@ -78,6 +79,9 @@ namespace UniReduxEditor.Sample2
                 {
                     _treeView.SetSerializableStateElement(toDoState.ToSerialize(false));
                 }
+                _disposable?.Dispose();
+                var treeViewSelector = new UpdateTreeViewSelector(_treeView);
+                _disposable = _scriptableStore.Subscribe(treeViewSelector);
             }
             catch (Exception e)
             {
@@ -85,6 +89,35 @@ namespace UniReduxEditor.Sample2
                 Debug.LogError(e);
             }
             _treeView.Reload();
+        }
+
+        private class UpdateTreeViewSelector: IObserver<ToDoState>
+        {
+            private readonly UniReduxTreeView _treeView;
+
+            private ToDoState _toDoState;
+            public void OnNext(ToDoState value)
+            {
+                _toDoState = value;
+            }
+
+            public void OnError(Exception error)
+            {
+                Debug.LogError(error);
+            }
+
+            public void OnCompleted()
+            {
+                if (_toDoState != null)
+                {
+                    _treeView.SetSerializableStateElement(_toDoState.ToSerialize(false));
+                }
+            }
+
+            public UpdateTreeViewSelector(UniReduxTreeView treeView)
+            {
+                _treeView = treeView;
+            }
         }
     }
 }

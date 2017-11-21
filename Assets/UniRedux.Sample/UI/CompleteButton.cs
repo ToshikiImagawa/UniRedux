@@ -7,15 +7,6 @@ namespace UniRedux.Sample.UI
     {
         private int _toDoId = -1;
 
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
-
-
         public void Init(int toDoId)
         {
             _toDoId = toDoId;
@@ -37,6 +28,7 @@ namespace UniRedux.Sample.UI
                 ToDoId = _toDoId
             });
         }
+
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
         {
             Run();

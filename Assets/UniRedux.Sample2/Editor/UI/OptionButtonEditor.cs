@@ -6,18 +6,18 @@ using UnityEngine.UI;
 
 namespace UniReduxEditor.Sample2.UI
 {
-    [CustomEditor(typeof(SortButton))]
-    public class SortButtonEditor : ButtonEditor
+    [CustomEditor(typeof(OptionButton)), CanEditMultipleObjects]
+    public class OptionButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            var toDoStore = serializedObject.FindProperty("_toDoStore");
-            var filterType = serializedObject.FindProperty("_filterType");
+            var toDoInputField = serializedObject.FindProperty("_optionType");
+            var toDoStore = serializedObject.FindProperty("_toDoScriptableStore");
 
             EditorGUILayout.PropertyField(toDoStore);
-            EditorGUILayout.PropertyField(filterType);
+            EditorGUILayout.PropertyField(toDoInputField);
             serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.Space();

@@ -509,7 +509,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _optionType: 1
 --- !u!114 &378365986
 MonoBehaviour:
@@ -622,7 +623,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _optionType: 3
 --- !u!114 &387683628
 MonoBehaviour:
@@ -735,7 +737,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _toDoInputField: {fileID: 951590580}
 --- !u!114 &409197850
 MonoBehaviour:
@@ -990,7 +993,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _filterType: 2
 --- !u!114 &527618634
 MonoBehaviour:
@@ -1842,7 +1846,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _optionType: 0
 --- !u!114 &1313196321
 MonoBehaviour:
@@ -2133,7 +2138,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _filterType: 0
 --- !u!114 &1509875712
 MonoBehaviour:
@@ -2647,8 +2653,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51a6805a4a8fce442bffc41ce793622f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _toDoScriptableStore: {fileID: 0}
-  _toDoElementPrefab: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
+  _toDoElementPrefab: {fileID: 114347580534475866, guid: 16e5abf8298a23a4f8346ed7cce9df4f,
+    type: 2}
 --- !u!1 &2145809251
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,7 +2735,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _toDoScriptableStore: {fileID: 0}
+  _toDoScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
+    type: 2}
   _filterType: 1
 --- !u!114 &2145809254
 MonoBehaviour:

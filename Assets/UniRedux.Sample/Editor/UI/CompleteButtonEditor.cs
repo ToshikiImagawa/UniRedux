@@ -1,26 +1,14 @@
 ﻿using System.Reflection;
-using UniRedux.Sample2.UI;
+using UniRedux.Sample.UI;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;
 
-namespace UniReduxEditor.Sample2.UI
+namespace UniReduxEditor.Sample.UI
 {
-    [CustomEditor(typeof(CompleteButton))]
+    [CustomEditor(typeof(CompleteButton)), CanEditMultipleObjects]
     public class CompleteButtonEditor : ButtonEditor
     {
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-
-            var toDoStore = serializedObject.FindProperty("_toDoStore");
-
-            EditorGUILayout.PropertyField(toDoStore);
-            serializedObject.ApplyModifiedProperties();
-
-            EditorGUILayout.Space();
-            base.OnInspectorGUI();
-        }
         private void OnSceneGUI()
         {
             var editorGuiUtilityType = typeof(EditorGUIUtility);

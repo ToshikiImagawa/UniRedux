@@ -1,20 +1,23 @@
 ﻿using System.Reflection;
-using UniRedux.Sample.UI;
+using UniRedux.Sample2.UI;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;
 
-namespace UniReduxEditor.Sample.UI
+namespace UniReduxEditor.Sample2.UI
 {
-    [CustomEditor(typeof(AddToDoButton))]
-    public class AddToDoButtonEditor : ButtonEditor
+    [CustomEditor(typeof(SortButton)), CanEditMultipleObjects]
+    public class SortButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            var toDoInputField = serializedObject.FindProperty("_toDoInputField");
-            EditorGUILayout.PropertyField(toDoInputField);
+            var toDoStore = serializedObject.FindProperty("_toDoScriptableStore");
+            var filterType = serializedObject.FindProperty("_filterType");
+
+            EditorGUILayout.PropertyField(toDoStore);
+            EditorGUILayout.PropertyField(filterType);
             serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.Space();
@@ -26,7 +29,7 @@ namespace UniReduxEditor.Sample.UI
             var editorGuiUtilityType = typeof(EditorGUIUtility);
             var icon = EditorGUIUtility.ObjectContent(null, typeof(Button)).image;
             var bindingFlags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
-            var args = new object[] {target, icon};
+            var args = new object[] { target, icon };
             editorGuiUtilityType.InvokeMember("SetIconForObject", bindingFlags, null, null, args);
         }
     }

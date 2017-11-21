@@ -13,6 +13,7 @@ namespace UniReduxEditor.Sample
         private UniReduxTreeView _treeView;
         private UniReduxMultiColumnHeader _header;
         private SearchField _searchField;
+        private IDisposable _disposable;
 
         [MenuItem("UniRedux/ToDoList/StateTreeDisplay open")]
         private static void Open()
@@ -72,6 +73,9 @@ namespace UniReduxEditor.Sample
                 {
                     _treeView.SetSerializableStateElement(toDoState.ToSerialize());
                 }
+                _disposable?.Dispose();
+                var treeViewSelector = new UpdateTreeViewSelector(_treeView);
+                _disposable = ToDoApplication.CurrentStore.Subscribe(treeViewSelector);
             }
             catch (Exception e)
             {
@@ -79,6 +83,36 @@ namespace UniReduxEditor.Sample
                 Debug.LogError(e);
             }
             _treeView.Reload();
+        }
+
+        private class UpdateTreeViewSelector : IObserver<ToDoState>
+        {
+            private readonly UniReduxTreeView _treeView;
+
+            private ToDoState _toDoState;
+
+            public void OnNext(ToDoState value)
+            {
+                _toDoState = value;
+            }
+
+            public void OnError(Exception error)
+            {
+                Debug.LogError(error);
+            }
+
+            public void OnCompleted()
+            {
+                if (_toDoState != null)
+                {
+                    _treeView.SetSerializableStateElement(_toDoState.ToSerialize());
+                }
+            }
+
+            public UpdateTreeViewSelector(UniReduxTreeView treeView)
+            {
+                _treeView = treeView;
+            }
         }
     }
 }

@@ -8,13 +8,6 @@ namespace UniRedux.Sample.UI
         [SerializeField] private OptionType _optionType;
         bool _toggle = true;
 
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
-
         private void Run()
         {
             DispachAction();
@@ -42,7 +35,7 @@ namespace UniRedux.Sample.UI
                     break;
             }
 
-            if(action != null)
+            if (action != null)
             {
                 ToDoApplication.CurrentStore.Dispatch(action);
                 _toggle = !_toggle;

@@ -1,37 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using UniRedux.Sample.UI;
+﻿using System.Reflection;
+using UniRedux.Sample2.UI;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;
 
-namespace UniReduxEditor.Sample.UI
+namespace UniReduxEditor.Sample2.UI
 {
-    [CustomEditor(typeof(OptionButton))]
-    public class OptionButtonEditor : ButtonEditor
+    [CustomEditor(typeof(SelectedToggle)), CanEditMultipleObjects]
+    public class SelectedToggleEditor : ToggleEditor
     {
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            var toDoInputField = serializedObject.FindProperty("_optionType");
-            EditorGUILayout.PropertyField(toDoInputField);
+            var toDoStore = serializedObject.FindProperty("_toDoScriptableStore");
+
+            EditorGUILayout.PropertyField(toDoStore);
             serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.Space();
             base.OnInspectorGUI();
         }
-
         private void OnSceneGUI()
         {
             var editorGuiUtilityType = typeof(EditorGUIUtility);
-            var icon = EditorGUIUtility.ObjectContent(null, typeof(Button)).image;
+            var icon = EditorGUIUtility.ObjectContent(null, typeof(Toggle)).image;
             var bindingFlags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
-            var args = new object[] { target, icon };
+            var args = new object[] {target, icon};
             editorGuiUtilityType.InvokeMember("SetIconForObject", bindingFlags, null, null, args);
         }
     }

@@ -26,6 +26,10 @@ namespace UniRedux.Sample.UI
             });
         }
 
+        public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData eventData)
+        {
+        }
+
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
         {
             Run(!isOn);

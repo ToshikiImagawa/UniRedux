@@ -7,12 +7,6 @@ namespace UniRedux.Sample.UI
     {
         [SerializeField] private InputField _toDoInputField;
 
-        protected override void Awake()
-        {
-            base.Awake();
-            onClick.AddListener(Run);
-        }
-
         private void Run()
         {
             if (_toDoInputField == null) return;

@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 namespace UniReduxEditor.Sample2.UI
 {
-    [CustomEditor(typeof(AddToDoButton))]
+    [CustomEditor(typeof(AddToDoButton)), CanEditMultipleObjects]
     public class AddToDoButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            var toDoStore = serializedObject.FindProperty("_toDoStore");
+            var toDoStore = serializedObject.FindProperty("_toDoScriptableStore");
             var toDoInputField = serializedObject.FindProperty("_toDoInputField");
 
             EditorGUILayout.PropertyField(toDoStore);
@@ -29,7 +29,7 @@ namespace UniReduxEditor.Sample2.UI
             var editorGuiUtilityType = typeof(EditorGUIUtility);
             var icon = EditorGUIUtility.ObjectContent(null, typeof(Button)).image;
             var bindingFlags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
-            var args = new object[] { target, icon };
+            var args = new object[] {target, icon};
             editorGuiUtilityType.InvokeMember("SetIconForObject", bindingFlags, null, null, args);
         }
     }

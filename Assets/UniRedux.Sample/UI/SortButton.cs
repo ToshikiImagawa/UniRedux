@@ -7,13 +7,6 @@ namespace UniRedux.Sample.UI
     {
         [SerializeField] private TodosFilter _filterType;
 
-        protected override void Awake()
-        {
-            base.Awake();
-
-            onClick.AddListener(Run);
-        }
-
         private void Run()
         {
             DispachAction();
@@ -27,6 +20,7 @@ namespace UniRedux.Sample.UI
                 Filter = _filterType
             });
         }
+
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
         {
             Run();

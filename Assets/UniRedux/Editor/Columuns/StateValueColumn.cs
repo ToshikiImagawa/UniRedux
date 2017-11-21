@@ -9,7 +9,7 @@ namespace UniReduxEditor
 
         public StateValueColumn()
         {
-            width = minWidth = 150;
+            width = minWidth = 100;
             maxWidth = 500;
             autoResize = true;
             headerContent = new GUIContent("StateValue");

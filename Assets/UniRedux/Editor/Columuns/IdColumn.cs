@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace UniReduxEditor
 {
-    public class IdColum : MultiColumnHeaderState.Column, IHasColumnIndex
+    public class IdColumn : MultiColumnHeaderState.Column, IHasColumnIndex
     {
         public ColumnIndex Index { get; } = ColumnIndex.Id;
 
-        public IdColum()
+        public IdColumn()
         {
-            width = minWidth = maxWidth = 32;
+            width = minWidth = maxWidth = 70;
             headerContent = new GUIContent("Id");
             sortingArrowAlignment = TextAlignment.Right;
             allowToggleVisibility = true;

@@ -14,8 +14,9 @@ namespace UniReduxEditor.Sample2
         private UniReduxMultiColumnHeader _header;
         private SearchField _searchField;
         private IDisposable _disposable;
+        public int RootId = 0;
 
-        private ToDoScriptableStore _scriptableStore;
+        public ToDoScriptableStore ScriptableStore;
 
         [MenuItem("UniRedux/ToDoList_Try/StateTreeDisplay open")]
         private static void Open()
@@ -27,7 +28,7 @@ namespace UniReduxEditor.Sample2
         {
             _state = new TreeViewState();
             _header = new UniReduxMultiColumnHeader(null);
-            _treeView = new UniReduxTreeView(_state, _header)
+            _treeView = new UniReduxTreeView(_state, _header, NewOpenWindow)
             {
                 searchString = SessionState.GetString(UniReduxTreeView.SortedColumnIndexStateKey, "")
             };
@@ -38,7 +39,7 @@ namespace UniReduxEditor.Sample2
 
         private void OnGUI()
         {
-            EditorGUILayout.LabelField("UniReduxで管理されているStoreのStateを表示します。");
+            EditorGUILayout.LabelField($"UniReduxで管理されているStoreのStateを表示します。{(RootId > 0 ? $"Id:{RootId}を表示しています." : "")}");
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
                 if (GUILayout.Button("Reload", EditorStyles.toolbarButton, GUILayout.Width(100)))
@@ -58,8 +59,8 @@ namespace UniReduxEditor.Sample2
                     }
                 }
                 EditorGUILayout.LabelField("Store Object", GUILayout.Width(80));
-                _scriptableStore =
-                    EditorGUILayout.ObjectField(_scriptableStore, typeof(ToDoScriptableStore), true, GUILayout.Width(150))
+                ScriptableStore =
+                    EditorGUILayout.ObjectField(ScriptableStore, typeof(ToDoScriptableStore), true, GUILayout.Width(150))
                         as ToDoScriptableStore;
             }
 
@@ -70,32 +71,34 @@ namespace UniReduxEditor.Sample2
             }
         }
 
-        private void Reload()
+        public void Reload()
         {
             try
             {
-                var toDoState = _scriptableStore.GetState();
+                var toDoState = ScriptableStore.GetState();
                 if (toDoState != null)
                 {
-                    _treeView.SetSerializableStateElement(toDoState.ToSerialize(false));
+                    _treeView.SetSerializableStateElement(RootId, toDoState.ToSerialize(false));
                 }
                 _disposable?.Dispose();
-                var treeViewSelector = new UpdateTreeViewSelector(_treeView);
-                _disposable = _scriptableStore.Subscribe(treeViewSelector);
+                var treeViewSelector = new UpdateTreeViewSelector(_treeView, RootId);
+                _disposable = ScriptableStore.Subscribe(treeViewSelector);
             }
             catch (Exception e)
             {
-                _treeView = new UniReduxTreeView(_state, _header);
+                _treeView = new UniReduxTreeView(_state, _header, NewOpenWindow);
                 Debug.LogError(e);
             }
             _treeView.Reload();
         }
 
-        private class UpdateTreeViewSelector: IObserver<ToDoState>
+        private class UpdateTreeViewSelector : IObserver<ToDoState>
         {
             private readonly UniReduxTreeView _treeView;
+            private readonly int _rootId = 0;
 
             private ToDoState _toDoState;
+
             public void OnNext(ToDoState value)
             {
                 _toDoState = value;
@@ -110,14 +113,24 @@ namespace UniReduxEditor.Sample2
             {
                 if (_toDoState != null)
                 {
-                    _treeView.SetSerializableStateElement(_toDoState.ToSerialize(false));
+                    _treeView.SetSerializableStateElement(_rootId, _toDoState.ToSerialize(false));
                 }
             }
 
-            public UpdateTreeViewSelector(UniReduxTreeView treeView)
+            public UpdateTreeViewSelector(UniReduxTreeView treeView, int rootId = 0)
             {
                 _treeView = treeView;
+                _rootId = rootId;
             }
+        }
+
+        private void NewOpenWindow(int id)
+        {
+            var toDoTreeWindow = CreateInstance<StateTreeDisplay>();
+            toDoTreeWindow.ScriptableStore = ScriptableStore;
+            toDoTreeWindow.RootId = id;
+            toDoTreeWindow.Show();
+            toDoTreeWindow.Reload();
         }
     }
 }

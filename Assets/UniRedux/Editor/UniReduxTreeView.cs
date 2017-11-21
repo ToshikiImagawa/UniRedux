@@ -13,10 +13,11 @@ namespace UniReduxEditor
         public const string SortedColumnIndexStateKey = "UniReduxTreeView_SearchString";
         private TreeViewItem RootItem { get; set; }
         private int _id = 1;
+        private Action<int> _openNewTreeViewAction;
 
         private int Id => _id++;
 
-        public void SetSerializableStateElement(params SerializableStateElement[] rootElement)
+        public void SetSerializableStateElement(int rootId = 0, params SerializableStateElement[] rootElement)
         {
             _id = 1;
             RootItem = new TreeViewItem
@@ -26,12 +27,44 @@ namespace UniReduxEditor
             };
 
             var items = rootElement.Select(CreateTreeViewItem).ToList();
-            RootItem.children = items;
+            if (rootId > 0)
+            {
+                TreeViewItem childRoot = null;
+                List<TreeViewItem> children = items;
+                do
+                {
+                    if (children == null)
+                    {
+                        childRoot = null;
+                        break;
+                    }
+                    childRoot = null;
+                    foreach (var item in children)
+                    {
+                        if (item.id < rootId)
+                        {
+                            childRoot = item;
+                        }
+                        else if (item.id == rootId)
+                        {
+                            childRoot = item;
+                            break;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    children = childRoot?.children ?? null;
+                } while (childRoot != null && childRoot.id != rootId);
 
+                if (childRoot != null) items = children;
+            }
+            RootItem.children = items;
             Reload();
         }
 
-        public UniReduxTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader)
+        public UniReduxTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, Action<int> openNewTreeViewAction)
             : base(state, multiColumnHeader)
         {
             rowHeight = 32;
@@ -45,6 +78,7 @@ namespace UniReduxEditor
             multiColumnHeader.ResizeToFit();
             if (RootItem != null) Reload();
             multiColumnHeader.sortedColumnIndex = SessionState.GetInt(SortedColumnIndexStateKey, -1);
+            _openNewTreeViewAction = openNewTreeViewAction;
         }
 
         protected override TreeViewItem BuildRoot()
@@ -84,7 +118,7 @@ namespace UniReduxEditor
             switch (columnIndex)
             {
                 case ColumnIndex.Id:
-                    EditorGUI.LabelField(cellRect, args.item.id.ToString(), EditorStyles.label);
+                    EditorGUI.LabelField(cellRect, $"{uniReduxTreeModel.Element.StateId}", EditorStyles.label);
                     break;
                 case ColumnIndex.StateName:
                     var spaceRect = cellRect;
@@ -98,7 +132,12 @@ namespace UniReduxEditor
                     EditorGUI.LabelField(spaceRect, uniReduxTreeModel.Element.StateName, EditorStyles.largeLabel);
                     break;
                 case ColumnIndex.StateType:
-                    EditorGUI.LabelField(cellRect, uniReduxTreeModel.Element.StateType.Name, EditorStyles.label);
+
+                    var curEvent = Event.current;
+                    var typeName = uniReduxTreeModel.Element.StateType.Name;
+                    if (cellRect.Contains(curEvent.mousePosition)) typeName = uniReduxTreeModel.Element.StateType.FullName;
+
+                    EditorGUI.LabelField(cellRect, typeName, EditorStyles.label);
                     break;
                 case ColumnIndex.StateValue:
                     if (uniReduxTreeModel.Element.ObjectType == ObjectType.Array)
@@ -140,6 +179,15 @@ namespace UniReduxEditor
                                     EditorGUI.SelectableLabel(cellRect, $"{uniReduxTreeModel.Element.StateValue}", EditorStyles.textField);
                                     break;
                             }
+                        }
+                    }
+                    break;
+                case ColumnIndex.Button:
+                    if (uniReduxTreeModel.Element.ObjectType != ObjectType.Value && uniReduxTreeModel.children != null && uniReduxTreeModel.children.Count > 0)
+                    {
+                        if (GUI.Button(cellRect, "Open"))
+                        {
+                            _openNewTreeViewAction(uniReduxTreeModel.Element.StateId);
                         }
                     }
                     break;
@@ -250,7 +298,8 @@ namespace UniReduxEditor
         Id,
         StateName,
         StateValue,
-        StateType
+        StateType,
+        Button
     }
 
     public class BackgroundColorScope : GUI.Scope

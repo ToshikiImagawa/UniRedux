@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace UniRedux.Sample.Application
+namespace UniRedux.Sample
 {
     public static class Util
     {

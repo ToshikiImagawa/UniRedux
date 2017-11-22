@@ -1,4 +1,4 @@
-namespace UniRedux.Sample.Application
+namespace UniRedux.Sample
 {
     /// <summary>
     /// Action to add todo
@@ -80,5 +80,15 @@ namespace UniRedux.Sample.Application
     public struct RemoveSelectedTodosAction
     {
 
+    }
+
+    /// <summary>
+    /// ToDoフィルタータイプ
+    /// </summary>
+    public enum TodosFilter
+    {
+        All = 0,
+        InProgress = 1,
+        Completed = 2,
     }
 }

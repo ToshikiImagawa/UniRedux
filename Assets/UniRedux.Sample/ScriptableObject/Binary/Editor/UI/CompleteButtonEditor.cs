@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using UniRedux.Sample3.UI;
+using UniRedux.Sample.ScriptableObject.Binary.UI;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;
 
-namespace UniReduxEditor.Sample3.UI
+namespace UniReduxEditor.Sample.ScriptableObject.Binary.UI
 {
     [CustomEditor(typeof(CompleteButton)), CanEditMultipleObjects]
     public class CompleteButtonEditor : ButtonEditor

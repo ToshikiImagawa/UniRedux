@@ -3,14 +3,26 @@ using UnityEngine;
 
 namespace UniRedux
 {
-    public abstract class ScriptableStore<TState> : ScriptableObject, IStore<TState>
+    public abstract class ScriptableStore<TState> : ScriptableStore<TState, string>
+    {
+        protected override string Serialize(TState state)
+        {
+            return JsonUtility.ToJson(state);
+        }
+        protected override TState Deserialize(string serializeState)
+        {
+            return JsonUtility.FromJson<TState>(serializeState);
+        }
+    }
+
+    public abstract class ScriptableStore<TState, TSerializeState> : ScriptableObject, IStore<TState>
     {
         [SerializeField] private TState _initialState = default(TState);
 
         private readonly object _syncRoot = new object();
         private Dispatcher _dispatcher;
         private Reducer<TState> _reducer;
-        private string _lastState;
+        private TSerializeState _lastState;
         private event Action _completedListener;
         private event Action<Exception> _errorListener;
         private event Action<TState> _nextListener;
@@ -29,7 +41,7 @@ namespace UniRedux
         /// Get the state
         /// </summary>
         /// <returns></returns>
-        public TState GetState() => JsonUtility.FromJson<TState>(_lastState);
+        public TState GetState() => Deserialize(_lastState);
 
         /// <summary>
         /// Subscribe to change state
@@ -67,12 +79,14 @@ namespace UniRedux
 
         protected abstract Reducer<TState> InitReducer { get; }
         protected abstract Middleware<TState>[] InitMiddlewares { get; }
+        protected abstract TSerializeState Serialize(TState state);
+        protected abstract TState Deserialize(TSerializeState serializeState);
 
         private void OnEnable()
         {
             _reducer = InitReducer;
             _dispatcher = ApplyMiddlewares(InitMiddlewares);
-            _lastState = JsonUtility.ToJson(_initialState);
+            _lastState = Serialize(_initialState);
         }
 
         private Dispatcher ApplyMiddlewares(params Middleware<TState>[] middlewares)
@@ -89,7 +103,7 @@ namespace UniRedux
         {
             lock (_syncRoot)
             {
-                _lastState = JsonUtility.ToJson(_reducer(GetState(), action));
+                _lastState = Serialize(_reducer(GetState(), action));
             }
             try
             {

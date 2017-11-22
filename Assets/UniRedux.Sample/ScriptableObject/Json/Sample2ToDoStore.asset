@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89cec57a15026c54f9af98f5a1d23640, type: 3}
-  m_Name: ToDoStore
+  m_Name: Sample2ToDoStore
   m_EditorClassIdentifier: 
   _initialState:
     Filter: 0

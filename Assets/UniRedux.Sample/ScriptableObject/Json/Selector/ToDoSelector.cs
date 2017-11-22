@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRedux.Sample.Application;
 
-namespace UniRedux.Sample2
+namespace UniRedux.Sample.ScriptableObject.Json
 {
     public static class ToDoSelector
     {

@@ -1,12 +1,11 @@
 ﻿using System;
-using UniRedux.Sample.Application;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample3.UI
+namespace UniRedux.Sample.ScriptableObject.Binary.UI
 {
-    public class ToDoElement : UIBehaviour, IObserver<Sample2.ToDo>
+    public class ToDoElement : UIBehaviour, IObserver<ToDo>
     {
         [SerializeField] private ToDoScriptableStore _toDoScriptableStore;
         private int _toDoId = -1;
@@ -66,7 +65,7 @@ namespace UniRedux.Sample3.UI
             Debug.LogError(error);
         }
 
-        public void OnNext(Sample2.ToDo value)
+        public void OnNext(ToDo value)
         {
             _toDoText = value.Text;
             _isCompleted = value.Completed;

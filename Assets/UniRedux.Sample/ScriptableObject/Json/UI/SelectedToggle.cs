@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample2.UI
+namespace UniRedux.Sample.ScriptableObject.Json.UI
 {
     public class SelectedToggle : Toggle
     {

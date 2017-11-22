@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRedux.Sample.Application;
-using ToDo = UniRedux.Sample2.ToDo;
-using ToDoState = UniRedux.Sample2.ToDoState;
 
-namespace UniRedux.Sample3
+namespace UniRedux.Sample.ScriptableObject.Binary
 {
     public static class ToDoSelector
     {

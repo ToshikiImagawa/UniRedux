@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample2.UI
+namespace UniRedux.Sample.ScriptableObject.Json.UI
 {
     public class ToDoElement : UIBehaviour, IObserver<ToDo>
     {

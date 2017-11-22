@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using UniRedux.Sample.Application;
 
-namespace UniRedux.Sample2
+namespace UniRedux.Sample.ScriptableObject
 {
     /// <summary>
     /// ToDoList Reducer

@@ -1,7 +1,6 @@
 ﻿using System;
-using UniRedux.Sample.Application;
 
-namespace UniRedux.Sample2
+namespace UniRedux.Sample.ScriptableObject
 {
     [Serializable]
     public class ToDoState

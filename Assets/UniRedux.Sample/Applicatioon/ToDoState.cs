@@ -50,13 +50,4 @@ namespace UniRedux.Sample.Application
             }
         }
     }
-    /// <summary>
-    /// ToDoフィルタータイプ
-    /// </summary>
-    public enum TodosFilter
-    {
-        All = 0,
-        InProgress = 1,
-        Completed = 2,
-    }
 }

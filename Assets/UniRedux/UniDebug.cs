@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UniRedux.Sample.Application;
+using UniRedux.Sample;
 
 namespace UniRedux
 {

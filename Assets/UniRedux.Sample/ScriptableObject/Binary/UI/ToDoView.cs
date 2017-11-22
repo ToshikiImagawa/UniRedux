@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRedux.Sample.Application;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample3.UI
+namespace UniRedux.Sample.ScriptableObject.Binary.UI
 {
-    public class ToDoView : UIBehaviour, IObserver<Sample2.ToDo[]>
+    public class ToDoView : UIBehaviour, IObserver<ToDo[]>
     {
         [SerializeField] private ToDoScriptableStore _toDoScriptableStore;
         [SerializeField] public ToDoElement _toDoElementPrefab;
@@ -51,7 +50,7 @@ namespace UniRedux.Sample3.UI
             Debug.LogError(error);
         }
 
-        public void OnNext(Sample2.ToDo[] value)
+        public void OnNext(ToDo[] value)
         {
             _toDoIds = value.Select(todo => todo.Id).ToArray();
         }

@@ -1,12 +1,11 @@
 ﻿using System;
 using UniRedux;
-using UniRedux.Sample2;
+using UniRedux.Sample.ScriptableObject;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using ToDoScriptableStore = UniRedux.Sample3.ToDoScriptableStore;
 
-namespace UniReduxEditor.Sample3
+namespace UniReduxEditor.Sample.ScriptableObject
 {
     public class StateTreeDisplay : EditorWindow
     {
@@ -15,9 +14,10 @@ namespace UniReduxEditor.Sample3
         private UniReduxMultiColumnHeader _header;
         private SearchField _searchField;
         private IDisposable _disposable;
-        public int RootId = 0;
+        private int RootId = 0;
 
-        public ToDoScriptableStore ScriptableStore;
+        private UnityEngine.ScriptableObject _scriptableObject;
+        private IStore<ToDoState> _scriptableStore;
 
         [MenuItem("UniRedux/ToDoList_Try/StateTreeDisplay open")]
         private static void Open()
@@ -60,9 +60,9 @@ namespace UniReduxEditor.Sample3
                     }
                 }
                 EditorGUILayout.LabelField("Store Object", GUILayout.Width(80));
-                ScriptableStore =
-                    EditorGUILayout.ObjectField(ScriptableStore, typeof(ToDoScriptableStore), true, GUILayout.Width(150))
-                        as ToDoScriptableStore;
+                _scriptableObject = EditorGUILayout.ObjectField(_scriptableObject, typeof(UnityEngine.ScriptableObject), true, GUILayout.Width(150)) as UnityEngine.ScriptableObject;
+                _scriptableStore = _scriptableObject as IStore<ToDoState>;
+                if (_scriptableStore == null) _scriptableObject = null;
             }
 
             if (_treeView != null && _treeView.GetRows() != null)
@@ -76,14 +76,14 @@ namespace UniReduxEditor.Sample3
         {
             try
             {
-                var toDoState = ScriptableStore.GetState();
+                var toDoState = _scriptableStore.GetState();
                 if (toDoState != null)
                 {
                     _treeView.SetSerializableStateElement(RootId, toDoState.ToSerialize(false));
                 }
                 _disposable?.Dispose();
                 var treeViewSelector = new UpdateTreeViewSelector(_treeView, RootId);
-                _disposable = ScriptableStore.Subscribe(treeViewSelector);
+                _disposable = _scriptableStore.Subscribe(treeViewSelector);
             }
             catch (Exception e)
             {
@@ -128,7 +128,7 @@ namespace UniReduxEditor.Sample3
         private void NewOpenWindow(int id)
         {
             var toDoTreeWindow = CreateInstance<StateTreeDisplay>();
-            toDoTreeWindow.ScriptableStore = ScriptableStore;
+            toDoTreeWindow._scriptableObject = _scriptableObject;
             toDoTreeWindow.RootId = id;
             toDoTreeWindow.Show();
             toDoTreeWindow.Reload();

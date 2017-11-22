@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using UniRedux.Sample2.UI;
+using UniRedux.Sample.ScriptableObject.Json.UI;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine.UI;

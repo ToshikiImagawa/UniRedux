@@ -1,12 +1,11 @@
-﻿using UniRedux.Sample.Application;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace UniRedux.Test
+namespace UniRedux.Sample.Test
 {
     public class Test : MonoBehaviour
     {
-        public Sample2.ToDoScriptableStore JsonScriptableStore;
-        public Sample3.ToDoScriptableStore BinaryScriptableStore;
+        public ScriptableObject.Json.ToDoScriptableStore JsonScriptableStore;
+        public ScriptableObject.Binary.ToDoScriptableStore BinaryScriptableStore;
 
         public int m_element_num = 1000;
 
@@ -24,7 +23,7 @@ namespace UniRedux.Test
             m_noSerializer_dispatch_time = Time.realtimeSinceStartup;
             for (int i = 0; i < m_element_num; i++)
             {
-                ToDoApplication.CurrentStore.Dispatch(addToDoAction);
+                Application.ToDoApplication.CurrentStore.Dispatch(addToDoAction);
             }
             m_noSerializer_dispatch_time = Time.realtimeSinceStartup - m_noSerializer_dispatch_time;
 

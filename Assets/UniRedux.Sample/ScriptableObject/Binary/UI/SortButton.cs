@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Sample3.UI
+namespace UniRedux.Sample.ScriptableObject.Binary.UI
 {
     public class SortButton : Button
     {

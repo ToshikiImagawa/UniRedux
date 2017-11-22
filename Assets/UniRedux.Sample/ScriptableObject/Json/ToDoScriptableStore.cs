@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UniRedux.Sample2
+namespace UniRedux.Sample.ScriptableObject.Json
 {
     [CreateAssetMenu(fileName = "ToDoStore", menuName = "UniRedux/JsonToDoStore", order = 1)]
     public class ToDoScriptableStore : ScriptableStore<ToDoState>

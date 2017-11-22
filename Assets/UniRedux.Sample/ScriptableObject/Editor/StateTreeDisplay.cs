@@ -129,6 +129,8 @@ namespace UniReduxEditor.Sample.ScriptableObject
         {
             var toDoTreeWindow = CreateInstance<StateTreeDisplay>();
             toDoTreeWindow._scriptableObject = _scriptableObject;
+            toDoTreeWindow._scriptableStore = _scriptableStore;
+
             toDoTreeWindow.RootId = id;
             toDoTreeWindow.Show();
             toDoTreeWindow.Reload();

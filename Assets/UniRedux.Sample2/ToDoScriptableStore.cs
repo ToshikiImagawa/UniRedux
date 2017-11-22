@@ -2,8 +2,8 @@
 
 namespace UniRedux.Sample2
 {
-    [CreateAssetMenu]
-    public class ToDoScriptableStore : UniRedux.ScriptableStore<ToDoState>
+    [CreateAssetMenu(fileName = "ToDoStore", menuName = "UniRedux/ToDoStore", order = 1)]
+    public class ToDoScriptableStore : ScriptableStore<ToDoState>
     {
         protected override Reducer<ToDoState> InitReducer => ToDoReducer.Execute;
         protected override Middleware<ToDoState>[] InitMiddlewares { get; } = {UniReduxMiddleware.Logger};

@@ -1,4 +1,4 @@
-namespace UniRedux.Sample
+namespace UniRedux.Sample.Application
 {
     /// <summary>
     /// Action to add todo

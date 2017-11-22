@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UniRedux.Sample;
+using UniRedux.Sample.Application;
 
 namespace UniRedux
 {
 #if UNITY_EDITOR
     public static class UniDebug
     {
-        public static string ToJson<TState>(this TState state) where TState : class
+        public static string ToJson<TState>(this TState state)
         {
             return ToJson(StateReflection.Serialize(state));
         }
@@ -27,7 +27,6 @@ namespace UniRedux
         }
 
         public static SerializableStateElement ToSerialize<TState>(this TState state, bool isProperty = true)
-            where TState : class
         {
             return StateReflection.Serialize(state, isProperty);
         }

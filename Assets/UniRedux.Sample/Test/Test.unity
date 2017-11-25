@@ -345,39 +345,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1310687496
+--- !u!1 &1123831843
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1310687498}
-  - component: {fileID: 1310687497}
+  - component: {fileID: 1123831844}
+  - component: {fileID: 1123831845}
   m_Layer: 0
-  m_Name: Application
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1310687497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1310687496}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf23c4a88a3af48d396b08ce5793174d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1310687498
+--- !u!4 &1123831844
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1310687496}
+  m_GameObject: {fileID: 1123831843}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -385,6 +374,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1123831845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1123831843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a5d92341238fd449ddf4af61697ff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToDoApplication: {fileID: 11400000, guid: a581943e4b1482243b7289f40538b48a, type: 2}
+  JsonToDoApplication: {fileID: 11400000, guid: e46b777c1439faa4a93ac904861005c8,
+    type: 2}
+  BinaryToDoApplication: {fileID: 11400000, guid: 0ea48047d9abfce4cb5c5ec33ec15ee8,
+    type: 2}
+  m_element_num: 1000
+  m_noSerializer_dispatch_time: 0
+  m_jsonSerializer_dispatch_time: 0
+  m_binarySerializer_dispatch_time: 0
 --- !u!1 &1472802125
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +405,6 @@ GameObject:
   - component: {fileID: 1472802129}
   - component: {fileID: 1472802128}
   - component: {fileID: 1472802127}
-  - component: {fileID: 1472802130}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -462,7 +470,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1472802130}
+      - m_Target: {fileID: 1123831845}
         m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:
@@ -508,24 +516,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1472802125}
---- !u!114 &1472802130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1472802125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1a5d92341238fd449ddf4af61697ff9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JsonScriptableStore: {fileID: 11400000, guid: ca00bac1e799bd646b0efb5346326d71,
-    type: 2}
-  BinaryScriptableStore: {fileID: 11400000, guid: ef3609df4902f7e449ba3ef30525162f,
-    type: 2}
-  m_element_num: 1000
-  m_jsonSerializer_dispatch_time: 0
-  m_binarySerializer_dispatch_time: 0
 --- !u!1 &1843618221
 GameObject:
   m_ObjectHideFlags: 0

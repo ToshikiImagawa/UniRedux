@@ -4,8 +4,9 @@ namespace UniRedux.Sample.Test
 {
     public class Test : MonoBehaviour
     {
-        public ScriptableObject.Json.ToDoScriptableStore JsonScriptableStore;
-        public ScriptableObject.Binary.ToDoScriptableStore BinaryScriptableStore;
+        public ScriptableStore.Simple.ToDoApplication ToDoApplication;
+        public ScriptableStore.Json.ToDoApplication JsonToDoApplication;
+        public ScriptableStore.Binary.ToDoApplication BinaryToDoApplication;
 
         public int m_element_num = 1000;
 
@@ -23,21 +24,21 @@ namespace UniRedux.Sample.Test
             m_noSerializer_dispatch_time = Time.realtimeSinceStartup;
             for (int i = 0; i < m_element_num; i++)
             {
-                Application.ToDoApplication.CurrentStore.Dispatch(addToDoAction);
+                ToDoApplication.CurrentStore.Dispatch(addToDoAction);
             }
             m_noSerializer_dispatch_time = Time.realtimeSinceStartup - m_noSerializer_dispatch_time;
 
             m_jsonSerializer_dispatch_time = Time.realtimeSinceStartup;
             for (int i = 0; i < m_element_num; i++)
             {
-                JsonScriptableStore.Dispatch(addToDoAction);
+                JsonToDoApplication.CurrentStore.Dispatch(addToDoAction);
             }
             m_jsonSerializer_dispatch_time = Time.realtimeSinceStartup - m_jsonSerializer_dispatch_time;
 
             m_binarySerializer_dispatch_time = Time.realtimeSinceStartup;
             for (int i = 0; i < m_element_num; i++)
             {
-                BinaryScriptableStore.Dispatch(addToDoAction);
+                BinaryToDoApplication.CurrentStore.Dispatch(addToDoAction);
             }
             m_binarySerializer_dispatch_time = Time.realtimeSinceStartup - m_binarySerializer_dispatch_time;
         }

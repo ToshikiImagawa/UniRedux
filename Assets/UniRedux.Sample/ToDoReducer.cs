@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using UniSystem.Collections.Immutable;
-
-namespace UniRedux.Sample
+﻿namespace UniRedux.Sample
 {
     /// <summary>
     /// ToDoList Reducer
@@ -25,10 +21,6 @@ namespace UniRedux.Sample
             if (action.GetType() == typeof(AddToDoAction))
             {
                 return AddToDoReducer(previousState, (AddToDoAction)action);
-            }
-            if (action.GetType() == typeof(RemoveSelectedTodosAction))
-            {
-                return RemoveSelectedTodosReducer(previousState, (RemoveSelectedTodosAction)action);
             }
             return new ToDoState()
             {
@@ -54,23 +46,13 @@ namespace UniRedux.Sample
             {
                 Filter = previousState.Filter,
                 NextToDoId = previousState.NextToDoId + 1,
-                ToDos = previousState.ToDos.Add(new ToDo
+                ToDos = previousState.ToDos.AddItem(new ToDo
                 {
                     Id = previousState.NextToDoId,
                     Completed = false,
                     Selected = false,
                     Text = action.Text
                 })
-            };
-        }
-
-        private static ToDoState RemoveSelectedTodosReducer(ToDoState previousState, RemoveSelectedTodosAction action)
-        {
-            return new ToDoState
-            {
-                Filter = previousState.Filter,
-                NextToDoId = previousState.NextToDoId + 1,
-                ToDos = previousState.ToDos.RemoveAll(toDo => toDo.Selected)
             };
         }
 
@@ -96,8 +78,12 @@ namespace UniRedux.Sample
         /// <param name="previousState"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static ImmutableArray<ToDo> Execute(ImmutableArray<ToDo> previousState, object action)
+        public static ToDo[] Execute(ToDo[] previousState, object action)
         {
+            if (action.GetType() == typeof(RemoveSelectedTodosAction))
+            {
+                return RemoveSelectedTodosReducer(previousState, (RemoveSelectedTodosAction)action);
+            }
             if (action.GetType() == typeof(DeleteToDoAction))
             {
                 return DeleteToDoReducer(previousState, (DeleteToDoAction)action);
@@ -130,92 +116,92 @@ namespace UniRedux.Sample
             return previousState;
         }
 
-        private static ImmutableArray<ToDo> DeleteToDoReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] RemoveSelectedTodosReducer(ToDo[] previousState, RemoveSelectedTodosAction action)
+        {
+            return previousState.RemoveItem(toDo => toDo.Selected);
+        }
+
+        private static ToDo[] DeleteToDoReducer(ToDo[] previousState,
             DeleteToDoAction action)
         {
-            return previousState.RemoveAll(toDo => toDo.Id == action.ToDoId);
+            return previousState.RemoveItem(toDo => toDo.Id == action.ToDoId);
         }
 
-        private static ImmutableArray<ToDo> CompleteAllTodosReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] CompleteAllTodosReducer(ToDo[] previousState,
             CompleteAllTodosAction action)
         {
-            return previousState.Select(x => new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = x.Id,
-                Text = x.Text,
-                Selected = x.Selected,
+                Id = toDo.Id,
+                Text = toDo.Text,
+                Selected = toDo.Selected,
                 Completed = action.IsCompleted
-            }).ToImmutableArray();
+            });
         }
 
-        private static ImmutableArray<ToDo> CompleteSelectedTodosReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] CompleteSelectedTodosReducer(ToDo[] previousState,
             CompleteSelectedTodosAction action)
         {
-            return previousState.Select(x => new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = x.Id,
-                Text = x.Text,
-                Selected = x.Selected,
-                Completed = x.Selected ? action.IsCompleted : x.Completed
-            }).ToImmutableArray();
+                Id = toDo.Id,
+                Text = toDo.Text,
+                Selected = toDo.Selected,
+                Completed = toDo.Selected ? action.IsCompleted : toDo.Completed
+            });
         }
 
-        private static ImmutableArray<ToDo> UpdateSelectedAllToDoReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] UpdateSelectedAllToDoReducer(ToDo[] previousState,
             UpdateSelectedAllToDoAction action)
         {
-            return previousState.Select(x => new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = x.Id,
-                Text = x.Text,
+                Id = toDo.Id,
+                Text = toDo.Text,
                 Selected = action.IsSelected,
-                Completed = x.Completed
-            }).ToImmutableArray();
+                Completed = toDo.Completed
+            });
         }
 
-        private static ImmutableArray<ToDo> ToggleToDoReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] ToggleToDoReducer(ToDo[] previousState,
             ToggleCompletedToDoAction action)
         {
-            var todoToEdit = previousState.First(todo => todo.Id == action.ToDoId);
-
-            return previousState.Replace(todoToEdit, new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = todoToEdit.Id,
-                Text = todoToEdit.Text,
-                Selected = todoToEdit.Selected,
-                Completed = !todoToEdit.Completed
-            });
+                Id = toDo.Id,
+                Text = toDo.Text,
+                Selected = toDo.Selected,
+                Completed = !toDo.Completed
+            }, toDo => toDo.Id == action.ToDoId);
         }
 
-        private static ImmutableArray<ToDo> UpdateTextToDoReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] UpdateTextToDoReducer(ToDo[] previousState,
             UpdateTextToDoAction action)
         {
-            var todoToEdit = previousState.First(todo => todo.Id == action.ToDoId);
-
-            return previousState.Replace(todoToEdit, new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = todoToEdit.Id,
+                Id = toDo.Id,
                 Text = action.Text,
-                Selected = todoToEdit.Selected,
-                Completed = todoToEdit.Completed
-            });
+                Selected = toDo.Selected,
+                Completed = toDo.Completed
+            }, toDo => toDo.Id == action.ToDoId);
         }
 
-        private static ImmutableArray<ToDo> UpdateSelectedToDoReducer(ImmutableArray<ToDo> previousState,
+        private static ToDo[] UpdateSelectedToDoReducer(ToDo[] previousState,
             UpdateSelectedToDoAction action)
         {
-            var todoToEdit = previousState.First(todo => todo.Id == action.ToDoId);
-            return previousState.Replace(todoToEdit, new ToDo
+            return previousState.UpdateItem(toDo => new ToDo
             {
-                Id = todoToEdit.Id,
-                Text = todoToEdit.Text,
+                Id = toDo.Id,
+                Text = toDo.Text,
                 Selected = action.IsSelected,
-                Completed = todoToEdit.Completed
-            });
+                Completed = toDo.Completed
+            }, toDo => toDo.Id == action.ToDoId);
         }
 
         /// <summary>
         /// Initial value of State
         /// </summary>
-        public static ImmutableArray<ToDo> InitState => Util.Empty<ToDo>().ToImmutableArray();
+        public static ToDo[] InitState => Util.Empty<ToDo>();
     }
 }

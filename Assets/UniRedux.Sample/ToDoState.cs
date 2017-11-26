@@ -1,33 +1,21 @@
-using System;
-using UniSystem.Collections.Immutable;
+﻿using System;
 
 namespace UniRedux.Sample
 {
-    /// <summary>
-    /// ToDo一覧の状態
-    /// </summary>
     [Serializable]
     public class ToDoState
     {
-        public TodosFilter Filter { get; set; }
-        public int NextToDoId { get; set; }
-        public ImmutableArray<ToDo> ToDos { get; set; }
-
-#if UNITY_EDITOR
-        public override string ToString()
-        {
-            return this.ToJson();
-        }
-#endif
+        public TodosFilter Filter;
+        public int NextToDoId;
+        public ToDo[] ToDos;
     }
 
-    /// <summary>
-    /// ToDoフィルタータイプ
-    /// </summary>
-    public enum TodosFilter
+    [Serializable]
+    public class ToDo
     {
-        All = 0,
-        InProgress = 1,
-        Completed = 2,
+        public int Id;
+        public string Text;
+        public bool Completed;
+        public bool Selected;
     }
 }

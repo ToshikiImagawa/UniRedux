@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace UniSystem.Collections.Immutable
 {
+    [Serializable]
     public partial struct ImmutableArray<T> : IReadOnlyList<T>, IList<T>, IEquatable<ImmutableArray<T>>, IList, IImmutableArray, IStructuralComparable, IStructuralEquatable, IImmutableList<T>
     {
         /// <summary>

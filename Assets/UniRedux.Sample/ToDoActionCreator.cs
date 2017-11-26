@@ -81,4 +81,14 @@ namespace UniRedux.Sample
     {
 
     }
+
+    /// <summary>
+    /// ToDoフィルタータイプ
+    /// </summary>
+    public enum TodosFilter
+    {
+        All = 0,
+        InProgress = 1,
+        Completed = 2,
+    }
 }

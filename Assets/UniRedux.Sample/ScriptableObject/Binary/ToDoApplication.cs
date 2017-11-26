@@ -1,6 +1,9 @@
-﻿namespace UniRedux.Sample.Singleton.Binary
+﻿using UnityEngine;
+
+namespace UniRedux.Sample.ScriptableObject.Binary
 {
-    public class ToDoApplication : Application<ToDoState, ToDoApplication>
+    [CreateAssetMenu(fileName = "ToDoApplication", menuName = "UniRedux/ByteToDoApplication", order = 1)]
+    public class ToDoApplication : Application<ToDoState>
     {
         protected override IStore<ToDoState> InitStore
         {

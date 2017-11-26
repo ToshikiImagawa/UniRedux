@@ -385,15 +385,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a5d92341238fd449ddf4af61697ff9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToDoApplication: {fileID: 11400000, guid: a581943e4b1482243b7289f40538b48a, type: 2}
-  JsonToDoApplication: {fileID: 11400000, guid: e46b777c1439faa4a93ac904861005c8,
+  SimpleToDoApplication: {fileID: 11400000, guid: 732d27fb399a08b4e9ba51a2f485b5ac,
     type: 2}
-  BinaryToDoApplication: {fileID: 11400000, guid: 0ea48047d9abfce4cb5c5ec33ec15ee8,
+  JsonToDoApplication: {fileID: 11400000, guid: d77e217f189a7da468a6ca1c681abe6f,
     type: 2}
-  m_element_num: 1000
-  m_noSerializer_dispatch_time: 0
-  m_jsonSerializer_dispatch_time: 0
-  m_binarySerializer_dispatch_time: 0
+  BinaryToDoApplication: {fileID: 11400000, guid: ed855ccf0d9d12d40a258a75966f187d,
+    type: 2}
+  m_element_num: 100
+  scriptableObjectNoSerializerDispatchTime: 0
+  scriptableObjectJsonSerializerDispatchTime: 0
+  scriptableObjectBinarySerializerDispatchTime: 0
+  singletonNoSerializerDispatchTime: 0
+  singletonJsonSerializerDispatchTime: 0
+  singletonBinarySerializerDispatchTime: 0
 --- !u!1 &1472802125
 GameObject:
   m_ObjectHideFlags: 0

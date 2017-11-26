@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UniRedux
 {
     /// <summary>
-    /// Application
+    /// SingletonApplication
     /// </summary>
     public abstract class Application<TState, TApplication> where TApplication : Application<TState, TApplication>, new()
     {
@@ -47,7 +47,7 @@ namespace UniRedux
     }
 
     /// <summary>
-    /// Application
+    /// ScriptableObjectApplication
     /// </summary>
     public abstract class Application<TState> : ScriptableObject
     {

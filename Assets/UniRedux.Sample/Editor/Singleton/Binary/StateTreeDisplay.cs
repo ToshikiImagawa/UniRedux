@@ -1,13 +1,13 @@
 ﻿using UniRedux.Sample;
 using UniRedux;
 using UnityEditor;
-using UniRedux.Sample.Singleton.Simple;
+using UniRedux.Sample.Singleton.Binary;
 
-namespace UniReduxEditor.Sample.Singleton.Simple
+namespace UniReduxEditor.Sample.Singleton.Binary
 {
     public class SimpleStateTreeDisplay : StateTreeDisplay
     {
-        [MenuItem("UniRedux/Singleton_ToDoList/SimpleStateTreeDisplay open")]
+        [MenuItem("UniRedux/Singleton_ToDoList/BinaryStateTreeDisplay open")]
         private static void Open()
         {
             GetWindow<SimpleStateTreeDisplay>();

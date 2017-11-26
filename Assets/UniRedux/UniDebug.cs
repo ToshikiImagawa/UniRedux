@@ -32,7 +32,7 @@ namespace UniRedux
         }
     }
 
-    public static class StateReflection
+    internal static class StateReflection
     {
         public static SerializableStateElement Serialize<TState>(TState state, bool isProperty = true)
         {

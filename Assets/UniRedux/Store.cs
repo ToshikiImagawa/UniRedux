@@ -104,6 +104,7 @@ namespace UniRedux
         private event Action _completedListener;
         private event Action<Exception> _errorListener;
         private event Action<TState> _nextListener;
+        private bool isError = false;
 
         public object Dispatch(object action)
         {
@@ -126,17 +127,7 @@ namespace UniRedux
             _errorListener += observer.OnError;
             _nextListener += observer.OnNext;
 
-            var isError = false;
-            try
-            {
-                if (_lastState != null) observer.OnNext(_lastState);
-            }
-            catch (Exception e)
-            {
-                observer.OnError(e);
-                isError = true;
-            }
-            if (!isError) observer.OnCompleted();
+            if (_lastState != null) observer.OnNext(_lastState);
 
             return new Disposer(() =>
             {
@@ -163,7 +154,7 @@ namespace UniRedux
             }
             return dispatcher;
         }
-
+        
         private object InnerDispatch(object action)
         {
             lock (_syncRoot)
@@ -173,7 +164,6 @@ namespace UniRedux
             try
             {
                 _nextListener?.Invoke(_lastState);
-                _completedListener?.Invoke();
             }
             catch (Exception e)
             {
@@ -296,8 +286,7 @@ namespace UniRedux
             _completedListener += observer.OnCompleted;
             _errorListener += observer.OnError;
             _nextListener += observer.OnNext;
-
-            var isError = false;
+            
             try
             {
                 if (_lastState != null) observer.OnNext(Deserialize(_lastState));
@@ -305,9 +294,7 @@ namespace UniRedux
             catch (Exception e)
             {
                 observer.OnError(e);
-                isError = true;
             }
-            if (!isError) observer.OnCompleted();
 
             return new Disposer(() =>
             {
@@ -347,7 +334,6 @@ namespace UniRedux
             try
             {
                 _nextListener?.Invoke(Deserialize(_lastState));
-                _completedListener?.Invoke();
             }
             catch (Exception e)
             {

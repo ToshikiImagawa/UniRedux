@@ -13,14 +13,22 @@ namespace UniRedux.Sample.ScriptableObject.UI
         [SerializeField] public ToDoElement _toDoElementPrefab;
         private Application<ToDoState> ToDoApplication => _toDoApplicationObject as Application<ToDoState>;
         private readonly IList<ToDoElement> _toDoElementObjectList = new List<ToDoElement>();
-
-        private int[] _toDoIds = Util.Empty<int>();
-
+        
         private ScrollRect _scrollRect;
         private ScrollRect ScrollRect => _scrollRect ?? (_scrollRect = GetComponent<ScrollRect>());
 
         public void OnCompleted()
         {
+        }
+
+        public void OnError(Exception error)
+        {
+            Debug.LogError(error);
+        }
+
+        public void OnNext(ToDo[] value)
+        {
+            var _toDoIds = value.Select(todo => todo.Id).ToArray();
             if (_toDoIds.Length < _toDoElementObjectList.Count)
             {
                 for (var i = _toDoElementObjectList.Count - 1; i >= _toDoIds.Length; i--)
@@ -44,16 +52,6 @@ namespace UniRedux.Sample.ScriptableObject.UI
                 toDoElement.gameObject.SetActive(true);
                 toDoElement.Init(toDoId);
             }
-        }
-
-        public void OnError(Exception error)
-        {
-            Debug.LogError(error);
-        }
-
-        public void OnNext(ToDo[] value)
-        {
-            _toDoIds = value.Select(todo => todo.Id).ToArray();
         }
 
         protected override void Start()

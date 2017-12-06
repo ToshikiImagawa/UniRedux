@@ -68,8 +68,8 @@ namespace UniRedux.Sample
                             return false;
                     }
                 }).ToArray();
-                NextAction?.Invoke(toDos);
                 _toDos = toDos;
+                NextAction?.Invoke(toDos);
             }
 
             public IDisposable Subscribe(IObserver<ToDo[]> observer)
@@ -85,7 +85,6 @@ namespace UniRedux.Sample
                 if (_toDos != null)
                 {
                     observer.OnNext(_toDos);
-                    observer.OnCompleted();
                 }
 
                 return Util.CreateDisposer(() =>
@@ -117,8 +116,8 @@ namespace UniRedux.Sample
                 {
                     if (toDo.Id == _toDoId)
                     {
-                        NextAction?.Invoke(toDo);
                         _toDo = toDo;
+                        NextAction?.Invoke(toDo);
                     }
                 }
             }
@@ -134,7 +133,7 @@ namespace UniRedux.Sample
             }
 
             public IDisposable Subscribe(IObserver<ToDo> observer)
-            {
+            {                
                 CompletedAction -= observer.OnCompleted;
                 NextAction -= observer.OnNext;
                 ErrorAction -= observer.OnError;
@@ -146,7 +145,6 @@ namespace UniRedux.Sample
                 if (_toDo != null)
                 {
                     observer.OnNext(_toDo);
-                    observer.OnCompleted();
                 }
 
                 return Util.CreateDisposer(() =>

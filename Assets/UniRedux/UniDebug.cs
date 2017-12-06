@@ -87,52 +87,114 @@ namespace UniRedux
             bool isProperty)
         {
             if (values == null) return Util.Empty<SerializableStateElement>();
+            var isDictionary = values is IDictionary && !values.GetType().IsArray;
             var stateElementList = new List<SerializableStateElement>();
-            var index = 0;
-            foreach (var value in values)
+            if (isDictionary)
             {
-                if (index == 0) collectionType = value.GetType();
+                var dictionary = (IDictionary) values;
+                var dictionaryValues = (from object value in dictionary.Values select value).ToArray();
+                var dictionaryKeys = (from object key in dictionary.Keys select $"{key}").ToArray();
 
-                var isValueType = collectionType.IsValueType || value is string;
-                var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
-                if (value is string) isArray = false;
+                var index = 0;
 
-                if (isArray)
+                foreach (var value in dictionaryValues)
                 {
-                    var childrenCollectionType = collectionType;
-                    var children = GetChildren(value as IEnumerable, ref childrenCollectionType, isProperty);
-                    stateElementList.Add(new SerializableStateElement
+                    if (dictionaryKeys.Length <= index) break;
+                    var key = dictionaryKeys[index];
+
+                    if (index == 0) collectionType = value.GetType();
+
+                    var isValueType = collectionType.IsValueType || value is string || collectionType == typeof(string) || value is Type;
+                    var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
+                    if (value is string) isArray = false;
+
+                    if (isArray)
                     {
-                        Name = $"{index}",
-                        Value = $"{collectionType.Name}{(collectionType.IsArray ? "" : "[]")}",
-                        Type = collectionType,
-                        ObjectType = ObjectType.Array,
-                        Children = children
-                    });
+                        var childrenCollectionType = collectionType;
+                        var children = GetChildren(value as IEnumerable, ref childrenCollectionType, isProperty);
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{key}",
+                            Value = $"{collectionType.Name}{(collectionType.IsArray ? "" : "[]")}",
+                            Type = collectionType,
+                            ObjectType = ObjectType.Array,
+                            Children = children
+                        });
+                    }
+                    else if (!isValueType)
+                    {
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{key}",
+                            Value = "",
+                            Type = collectionType,
+                            ObjectType = ObjectType.Object,
+                            Children = GetChildren(value, isProperty)
+                        });
+                    }
+                    else
+                    {
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{key}",
+                            Value = value,
+                            Type = collectionType,
+                            ObjectType = ObjectType.Value,
+                            Children = Util.Empty<SerializableStateElement>()
+                        });
+                    }
+                    index++;
                 }
-                else if (!isValueType)
+            }
+            else
+            {
+                var index = 0;
+                foreach (var value in values)
                 {
-                    stateElementList.Add(new SerializableStateElement
+
+                    if (index == 0) collectionType = value.GetType();
+
+                    var isValueType = collectionType.IsValueType || value is string || collectionType == typeof(string) || value is Type;
+                    var isArray = /*value.GetType().IsArray ||*/ value is IEnumerable;
+                    if (value is string) isArray = false;
+
+                    if (isArray)
                     {
-                        Name = $"{index}",
-                        Value = "",
-                        Type = collectionType,
-                        ObjectType = ObjectType.Object,
-                        Children = GetChildren(value, isProperty)
-                    });
-                }
-                else
-                {
-                    stateElementList.Add(new SerializableStateElement
+                        var childrenCollectionType = collectionType;
+                        var children = GetChildren(value as IEnumerable, ref childrenCollectionType, isProperty);
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{index}",
+                            Value = $"{collectionType.Name}{(collectionType.IsArray ? "" : "[]")}",
+                            Type = collectionType,
+                            ObjectType = ObjectType.Array,
+                            Children = children
+                        });
+                    }
+                    else if (!isValueType)
                     {
-                        Name = $"{index}",
-                        Value = value,
-                        Type = collectionType,
-                        ObjectType = ObjectType.Value,
-                        Children = Util.Empty<SerializableStateElement>()
-                    });
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{index}",
+                            Value = "",
+                            Type = collectionType,
+                            ObjectType = ObjectType.Object,
+                            Children = GetChildren(value, isProperty)
+                        });
+                    }
+                    else
+                    {
+                        stateElementList.Add(new SerializableStateElement
+                        {
+                            Name = $"{index}",
+                            Value = value,
+                            Type = collectionType,
+                            ObjectType = ObjectType.Value,
+                            Children = Util.Empty<SerializableStateElement>()
+                        });
+                    }
+                    index++;
                 }
-                index++;
             }
             return stateElementList.ToArray();
         }
@@ -141,7 +203,7 @@ namespace UniRedux
             Action<SerializableStateElement> listAddAction,
             bool isProperty)
         {
-            var isValueType = type.IsValueType || value is string;
+            var isValueType = type.IsValueType || value is string || value is Type;
             var isArray = value is IEnumerable;
             if (value is string) isArray = false;
 

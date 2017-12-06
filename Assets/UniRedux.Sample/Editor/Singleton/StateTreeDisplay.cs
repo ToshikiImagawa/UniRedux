@@ -69,8 +69,8 @@ namespace UniReduxEditor.Sample.Singleton
                     _treeView.SetSerializableStateElement(RootId, toDoState.ToSerialize(false));
                 }
                 _disposable?.Dispose();
-                var treeViewSelector = new UpdateTreeViewSelector(_treeView, RootId);
-                _disposable = CurrentStore.Subscribe(treeViewSelector);
+                var treeViewObserver = new UpdateTreeViewObserver(_treeView, RootId);
+                _disposable = CurrentStore.Subscribe(treeViewObserver);
             }
             catch (Exception e)
             {
@@ -80,16 +80,17 @@ namespace UniReduxEditor.Sample.Singleton
             _treeView.Reload();
         }
 
-        private class UpdateTreeViewSelector : IObserver<ToDoState>
+        private class UpdateTreeViewObserver : IObserver<ToDoState>
         {
             private readonly UniReduxTreeView _treeView;
             private readonly int _rootId = 0;
-
-            private ToDoState _toDoState;
-
+            
             public void OnNext(ToDoState value)
             {
-                _toDoState = value;
+                if (value != null)
+                {
+                    _treeView.SetSerializableStateElement(_rootId, value.ToSerialize(false));
+                }
             }
 
             public void OnError(Exception error)
@@ -99,13 +100,9 @@ namespace UniReduxEditor.Sample.Singleton
 
             public void OnCompleted()
             {
-                if (_toDoState != null)
-                {
-                    _treeView.SetSerializableStateElement(_rootId, _toDoState.ToSerialize(false));
-                }
             }
 
-            public UpdateTreeViewSelector(UniReduxTreeView treeView, int rootId = 0)
+            public UpdateTreeViewObserver(UniReduxTreeView treeView, int rootId = 0)
             {
                 _treeView = treeView;
                 _rootId = rootId;

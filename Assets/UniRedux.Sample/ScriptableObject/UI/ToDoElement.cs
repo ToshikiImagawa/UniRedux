@@ -10,9 +10,6 @@ namespace UniRedux.Sample.ScriptableObject.UI
         [SerializeField] private UnityEngine.ScriptableObject _toDoApplicationObject;
         private Application<ToDoState> ToDoApplication => _toDoApplicationObject as Application<ToDoState>;
         private int _toDoId = -1;
-        private string _toDoText = string.Empty;
-        private bool _isCompleted;
-        private bool _isSelected;
 
         private IDisposable _disposable;
 
@@ -51,14 +48,6 @@ namespace UniRedux.Sample.ScriptableObject.UI
 
         public void OnCompleted()
         {
-            ToDoTitle.text = _toDoText;
-            CompleteButton.targetGraphic.color = _isCompleted
-                ? new Color(233f / 255f, 147f / 255f, 40f / 255f)
-                : new Color(137f / 255f, 137f / 255f, 137f / 255f);
-            ToDoTitle.color = _isCompleted
-                ? new Color(170f / 170f, 147f / 255f, 170f / 255f)
-                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
-            ToDoSelectToggle.isOn = _isSelected;
         }
 
         public void OnError(Exception error)
@@ -68,9 +57,18 @@ namespace UniRedux.Sample.ScriptableObject.UI
 
         public void OnNext(ToDo value)
         {
-            _toDoText = value.Text;
-            _isCompleted = value.Completed;
-            _isSelected = value.Selected;
+            var _toDoText = value.Text;
+            var _isCompleted = value.Completed;
+            var _isSelected = value.Selected;
+
+            ToDoTitle.text = _toDoText;
+            CompleteButton.targetGraphic.color = _isCompleted
+                ? new Color(233f / 255f, 147f / 255f, 40f / 255f)
+                : new Color(137f / 255f, 137f / 255f, 137f / 255f);
+            ToDoTitle.color = _isCompleted
+                ? new Color(170f / 170f, 147f / 255f, 170f / 255f)
+                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
+            ToDoSelectToggle.isOn = _isSelected;
         }
     }
 }

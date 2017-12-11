@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -24,26 +25,38 @@ namespace UniRedux
             return new DeepFreezeStoreBinary<TState>(reducer, preloadedState, enhancer);
         }
 
-        public static T[] InsertItem<T>(this T[] array, int index, T item)
+        #region Array
+        public static T[] InsertItem<T>(this T[] array, int index, T value)
         {
-            var list = array.ToList();
-            list.Insert(index, item);
-            return list.ToArray();
+            if (array.Length < index || index < 0) throw new ArgumentOutOfRangeException();
+            var isLast = array.Length == index;
+            if (isLast) return array.AddItem(value);
+            var newArray = new T[array.Length + 1];
+            Array.Copy(array, newArray, index);
+            newArray[index] = value;
+            Array.Copy(array, index + 1, newArray, index + 1, array.Length - index);
+            return newArray;
         }
-        public static T[] AddItem<T>(this T[] array, T item)
+        public static T[] AddItem<T>(this T[] array, T value)
         {
-            var list = array.ToList();
-            list.Add(item);
-            return list.ToArray();
+            var newArray = new T[array.Length + 1];
+            Array.Copy(array, newArray, array.Length);
+            newArray[array.Length] = value;
+            return newArray;
         }
         public static T[] RemoveItem<T>(this T[] array, int index)
         {
-            var list = array.ToList();
-            list.RemoveAt(index);
-            return list.ToArray();
+            if (array.Length <= index || index < 0) throw new ArgumentOutOfRangeException();
+            if (array.Length == 1) return new T[0];
+            var newArray = new T[array.Length - 1];
+            Array.Copy(array, newArray, index);
+            if (array.Length - 1 == index) return newArray;
+            Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+            return newArray;
         }
         public static T[] RemoveItem<T>(this T[] array, Predicate<T> match)
         {
+            if (match == null) throw new ArgumentNullException();
             var list = array.ToList();
             list.RemoveAll(match);
             return list.ToArray();
@@ -59,6 +72,7 @@ namespace UniRedux
         }
         public static T[] UpdateItem<T>(this T[] array, int index, Func<T, T> updater)
         {
+            if (updater == null) throw new ArgumentNullException();
             var copyArray = array.ToArray();
             if (copyArray.Length > index && index >= 0)
             {
@@ -68,12 +82,122 @@ namespace UniRedux
         }
         public static T[] UpdateItem<T>(this T[] array, Func<T, T> updater, Predicate<T> match)
         {
+            if (match == null) throw new ArgumentNullException();
+            if (updater == null) throw new ArgumentNullException();
             return array.Select(target => match(target) ? updater(target) : target).ToArray();
         }
         public static T[] UpdateItem<T>(this T[] array, Func<T, T> updater)
         {
+            if (updater == null) throw new ArgumentNullException();
             return array.Select(target => updater(target)).ToArray();
         }
+        #endregion
+        #region Enumerable
+        public static IEnumerable<T> InsertItem<T>(this IEnumerable<T> items, int index, T value)
+        {
+            var list = items.ToList();
+            list.Insert(index, value);
+            return list.ToArray();
+        }
+        public static IEnumerable<T> AddItem<T>(this IEnumerable<T> eumerable, T item)
+        {
+            var list = eumerable.ToList();
+            list.Add(item);
+            return list.ToArray();
+        }
+        public static IEnumerable<T> RemoveItem<T>(this IEnumerable<T> eumerable, int index)
+        {
+            var list = eumerable.ToList();
+            list.RemoveAt(index);
+            return list.ToArray();
+        }
+        public static IEnumerable<T> RemoveItem<T>(this IEnumerable<T> eumerable, Predicate<T> match)
+        {
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            var list = eumerable.ToList();
+            list.RemoveAll(match);
+            return list.ToArray();
+        }
+        public static IEnumerable<T> UpdateItem<T>(this IEnumerable<T> eumerable, int index, T item)
+        {
+            var copyArray = eumerable.ToArray();
+            if (copyArray.Length > index && index >= 0)
+            {
+                copyArray[index] = item;
+            }
+            return copyArray;
+        }
+        public static IEnumerable<T> UpdateItem<T>(this IEnumerable<T> eumerable, int index, Func<T, T> updater)
+        {
+            if (updater == null) throw new ArgumentNullException(nameof(updater));
+            var copyArray = eumerable.ToArray();
+            if (copyArray.Length > index && index >= 0)
+            {
+                copyArray[index] = updater(copyArray[index]);
+            }
+            return copyArray;
+        }
+        public static IEnumerable<T> UpdateItem<T>(this IEnumerable<T> eumerable, Func<T, T> updater, Predicate<T> match)
+        {
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            if (updater == null) throw new ArgumentNullException(nameof(updater));
+            return eumerable.Select(target => match(target) ? updater(target) : target).ToArray();
+        }
+        public static IEnumerable<T> UpdateItem<T>(this IEnumerable<T> eumerable, Func<T, T> updater)
+        {
+            if (updater == null) throw new ArgumentNullException(nameof(updater));
+            return eumerable.Select(target => updater(target)).ToArray();
+        }
+        #endregion
+        #region Dictionary
+        public static IDictionary<TKey, TValue> AddItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue item)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (dictionary.ContainsKey(key)) throw new ArgumentException(nameof(dictionary));
+            var newDictionary = new Dictionary<TKey, TValue>(dictionary);
+            newDictionary.Add(key, item);
+            return newDictionary;
+        }
+        public static IDictionary<TKey, TValue> RemoveItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            var newDictionary = new Dictionary<TKey, TValue>(dictionary);
+            newDictionary.Remove(key);
+            return newDictionary;
+        }
+        public static IDictionary<TKey, TValue> RemoveItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Predicate<TValue> match)
+        {
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            return dictionary.Where(item => match(item.Value)).ToDictionary(item => item.Key, item => item.Value);
+        }
+        public static IDictionary<TKey, TValue> UpdateItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue item)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            var newDictionary = new Dictionary<TKey, TValue>(dictionary);
+            newDictionary[key] = item;
+            return newDictionary;
+        }
+        public static IDictionary<TKey, TValue> UpdateItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue, TValue> updater)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (dictionary.ContainsKey(key)) throw new ArgumentException(nameof(dictionary));
+            var newDictionary = new Dictionary<TKey, TValue>(dictionary);
+            newDictionary[key] = updater(newDictionary[key]);
+            return newDictionary;
+        }
+        public static IDictionary<TKey, TValue> UpdateItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TValue, TValue> updater, Predicate<TValue> match)
+        {
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            if (updater == null) throw new ArgumentNullException(nameof(updater));
+            return dictionary.Select(target => match(target.Value) ? new KeyValuePair<TKey, TValue>(target.Key, updater(target.Value)) : target).ToDictionary(item => item.Key, item => item.Value);
+        }
+        public static IDictionary<TKey, TValue> UpdateItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TValue, TValue> updater)
+        {
+            if (updater == null) throw new ArgumentNullException(nameof(updater));
+            return dictionary.Select(target => new KeyValuePair<TKey, TValue>(target.Key, updater(target.Value))).ToDictionary(item => item.Key, item => item.Value);
+        }
+        #endregion
+
     }
 
     /// <summary>
@@ -93,25 +217,36 @@ namespace UniRedux
         /// </summary>
         /// <returns></returns>
         TState GetState();
+
+        /// <summary>
+        /// Replace reducer
+        /// </summary>
+        /// <param name="nextReducer"></param>
+        void ReplaceReducer(Reducer<TState> nextReducer);
     }
 
     internal class Store<TState> : IStore<TState>
     {
         private readonly object _syncRoot = new object();
         private readonly Dispatcher _dispatcher;
-        private readonly Reducer<TState> _reducer;
+        private Reducer<TState> _reducer;
         private TState _lastState;
         private event Action _completedListener;
         private event Action<Exception> _errorListener;
         private event Action<TState> _nextListener;
         private bool isError = false;
 
-        public object Dispatch(object action)
+        object IStore<TState>.Dispatch(object action)
         {
             return _dispatcher(action);
         }
 
-        public TState GetState() => _lastState;
+        TState IStore<TState>.GetState() => _lastState;
+
+        void IStore<TState>.ReplaceReducer(Reducer<TState> nextReducer)
+        {
+            _reducer = nextReducer;
+        }
 
         /// <summary>
         /// Subscribe to change state
@@ -154,7 +289,7 @@ namespace UniRedux
             }
             return dispatcher;
         }
-        
+
         private object InnerDispatch(object action)
         {
             lock (_syncRoot)
@@ -251,7 +386,7 @@ namespace UniRedux
     {
         private readonly object _syncRoot = new object();
         private readonly Dispatcher _dispatcher;
-        private readonly Reducer<TState> _reducer;
+        private Reducer<TState> _reducer;
         private TSerializeState _lastState;
         private event Action _completedListener;
         private event Action<Exception> _errorListener;
@@ -262,7 +397,7 @@ namespace UniRedux
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public object Dispatch(object action)
+        object IStore<TState>.Dispatch(object action)
         {
             return _dispatcher(action);
         }
@@ -271,7 +406,12 @@ namespace UniRedux
         /// Get the state
         /// </summary>
         /// <returns></returns>
-        public TState GetState() => Deserialize(_lastState);
+        TState IStore<TState>.GetState() => Deserialize(_lastState);
+
+        void IStore<TState>.ReplaceReducer(Reducer<TState> nextReducer)
+        {
+            _reducer = nextReducer;
+        }
 
         /// <summary>
         /// Subscribe to change state
@@ -286,7 +426,7 @@ namespace UniRedux
             _completedListener += observer.OnCompleted;
             _errorListener += observer.OnError;
             _nextListener += observer.OnNext;
-            
+
             try
             {
                 if (_lastState != null) observer.OnNext(Deserialize(_lastState));

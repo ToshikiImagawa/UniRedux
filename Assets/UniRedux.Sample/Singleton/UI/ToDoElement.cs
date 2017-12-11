@@ -46,11 +46,13 @@ namespace UniRedux.Sample.Singleton.UI
 
         public void OnCompleted()
         {
+            Destroy(gameObject);
         }
 
         public void OnError(Exception error)
         {
             Debug.LogError(error);
+            Destroy(gameObject);
         }
 
         public void OnNext(ToDo value)
@@ -58,7 +60,7 @@ namespace UniRedux.Sample.Singleton.UI
             var _toDoText = value.Text;
             var _isCompleted = value.Completed;
             var _isSelected = value.Selected;
-            
+
             ToDoTitle.text = _toDoText;
             CompleteButton.targetGraphic.color = _isCompleted
                 ? new Color(233f / 255f, 147f / 255f, 40f / 255f)
@@ -67,7 +69,6 @@ namespace UniRedux.Sample.Singleton.UI
                 ? new Color(170f / 170f, 147f / 255f, 170f / 255f)
                 : new Color(50f / 255f, 50f / 255f, 50f / 255f);
             ToDoSelectToggle.isOn = _isSelected;
-            Debug.Log("OnNext");
         }
         protected abstract IStore<ToDoState> CurrentStore { get; }
     }

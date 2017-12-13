@@ -12,7 +12,9 @@ namespace UniRedux.Sample
         {
             if (_filterToDoSelector != null) return _filterToDoSelector;
             _filterToDoSelector = new FilterToDoSubject();
-            toDoStore?.Subscribe(_filterToDoSelector);
+            toDoStore?.Subscribe(()=> {
+                (_filterToDoSelector as IObserver<ToDoState>)?.OnNext(toDoStore.GetState());
+            });
             return _filterToDoSelector;
         }
 

@@ -203,7 +203,7 @@ namespace UniRedux
     /// <summary>
     /// Store
     /// </summary>
-    public interface IStore<TState> : IObservable<TState>
+    public interface IStore<TState>
     {
         /// <summary>
         /// Dispatch an action
@@ -223,6 +223,12 @@ namespace UniRedux
         /// </summary>
         /// <param name="nextReducer"></param>
         void ReplaceReducer(Reducer<TState> nextReducer);
+
+        /// <summary>
+        /// Adds a change listener
+        /// </summary>
+        /// <param name="listener"></param>
+        IDisposable Subscribe(Action listener);
     }
 
     internal class Store<TState> : IStore<TState>
@@ -231,13 +237,12 @@ namespace UniRedux
         private readonly Dispatcher _dispatcher;
         private Reducer<TState> _reducer;
         private TState _lastState;
-        private event Action _completedListener;
-        private event Action<Exception> _errorListener;
-        private event Action<TState> _nextListener;
+        private event Action _changeListener;
         private bool isError = false;
 
         object IStore<TState>.Dispatch(object action)
         {
+            if (isError) return action;
             return _dispatcher(action);
         }
 
@@ -248,27 +253,14 @@ namespace UniRedux
             _reducer = nextReducer;
         }
 
-        /// <summary>
-        /// Subscribe to change state
-        /// </summary>
-        /// <param name="observer"></param>
-        /// <returns></returns>
-        public IDisposable Subscribe(IObserver<TState> observer)
+        IDisposable IStore<TState>.Subscribe(Action listener)
         {
-            _completedListener -= observer.OnCompleted;
-            _errorListener -= observer.OnError;
-            _nextListener -= observer.OnNext;
-            _completedListener += observer.OnCompleted;
-            _errorListener += observer.OnError;
-            _nextListener += observer.OnNext;
-
-            if (_lastState != null) observer.OnNext(_lastState);
-
+            _changeListener -= listener;
+            _changeListener += listener;
+            listener?.Invoke();
             return new Disposer(() =>
             {
-                _completedListener -= observer.OnCompleted;
-                _errorListener -= observer.OnError;
-                _nextListener -= observer.OnNext;
+                _changeListener -= listener;
             });
         }
 
@@ -292,18 +284,12 @@ namespace UniRedux
 
         private object InnerDispatch(object action)
         {
+            if (isError) return action;
             lock (_syncRoot)
             {
                 _lastState = _reducer(_lastState, action);
             }
-            try
-            {
-                _nextListener?.Invoke(_lastState);
-            }
-            catch (Exception e)
-            {
-                _errorListener?.Invoke(e);
-            }
+            _changeListener?.Invoke();
             return action;
         }
 
@@ -388,9 +374,7 @@ namespace UniRedux
         private readonly Dispatcher _dispatcher;
         private Reducer<TState> _reducer;
         private TSerializeState _lastState;
-        private event Action _completedListener;
-        private event Action<Exception> _errorListener;
-        private event Action<TState> _nextListener;
+        private event Action _changeListener;
 
         /// <summary>
         /// Dispatch an action
@@ -418,29 +402,14 @@ namespace UniRedux
         /// </summary>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IDisposable Subscribe(IObserver<TState> observer)
+        public IDisposable Subscribe(Action listener)
         {
-            _completedListener -= observer.OnCompleted;
-            _errorListener -= observer.OnError;
-            _nextListener -= observer.OnNext;
-            _completedListener += observer.OnCompleted;
-            _errorListener += observer.OnError;
-            _nextListener += observer.OnNext;
-
-            try
-            {
-                if (_lastState != null) observer.OnNext(Deserialize(_lastState));
-            }
-            catch (Exception e)
-            {
-                observer.OnError(e);
-            }
-
+            _changeListener -= listener;
+            _changeListener += listener;
+            listener();
             return new Disposer(() =>
             {
-                _completedListener -= observer.OnCompleted;
-                _errorListener -= observer.OnError;
-                _nextListener -= observer.OnNext;
+                _changeListener -= listener;
             });
         }
 
@@ -471,14 +440,7 @@ namespace UniRedux
             {
                 _lastState = Serialize(_reducer(Deserialize(_lastState), action));
             }
-            try
-            {
-                _nextListener?.Invoke(Deserialize(_lastState));
-            }
-            catch (Exception e)
-            {
-                _errorListener?.Invoke(e);
-            }
+            _changeListener?.Invoke();
             return action;
         }
 

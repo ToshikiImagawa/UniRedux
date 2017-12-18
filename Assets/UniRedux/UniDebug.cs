@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UniRedux.Sample;
 
 namespace UniRedux
 {
@@ -48,7 +47,7 @@ namespace UniRedux
 
         private static SerializableStateElement[] GetChildren(object obj, bool isProperty)
         {
-            if (obj == null) return Util.Empty<SerializableStateElement>();
+            if (obj == null) return Enumerable.Empty<SerializableStateElement>().ToArray();
             var stateElementList = new List<SerializableStateElement>();
 
             var targetType = obj.GetType();
@@ -86,7 +85,7 @@ namespace UniRedux
         private static SerializableStateElement[] GetChildren(IEnumerable values, ref Type collectionType,
             bool isProperty)
         {
-            if (values == null) return Util.Empty<SerializableStateElement>();
+            if (values == null) return Enumerable.Empty<SerializableStateElement>().ToArray();
             var isDictionary = values is IDictionary && !values.GetType().IsArray;
             var stateElementList = new List<SerializableStateElement>();
             if (isDictionary)
@@ -140,7 +139,7 @@ namespace UniRedux
                             Value = value,
                             Type = collectionType,
                             ObjectType = ObjectType.Value,
-                            Children = Util.Empty<SerializableStateElement>()
+                            Children = Enumerable.Empty<SerializableStateElement>().ToArray()
                         });
                     }
                     index++;
@@ -190,7 +189,7 @@ namespace UniRedux
                             Value = value,
                             Type = collectionType,
                             ObjectType = ObjectType.Value,
-                            Children = Util.Empty<SerializableStateElement>()
+                            Children = Enumerable.Empty<SerializableStateElement>().ToArray()
                         });
                     }
                     index++;
@@ -213,7 +212,7 @@ namespace UniRedux
                 Value = isArray ? $"{type.Name}" : isValueType ? value : "",
                 Type = type,
                 ObjectType = isArray ? ObjectType.Array : isValueType ? ObjectType.Value : ObjectType.Object,
-                Children = Util.Empty<SerializableStateElement>()
+                Children = Enumerable.Empty<SerializableStateElement>().ToArray()
             };
 
             if (isArray)

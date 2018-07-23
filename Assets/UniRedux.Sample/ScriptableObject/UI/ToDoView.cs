@@ -1,40 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UniRedux.EventSystems;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UniRedux.Sample.ScriptableObject.UI
 {
-    public class ToDoView : UIBehaviour, IObserver<ToDo[]>
+    public class ToDoView : RxUIBehaviour<ToDoState>
     {
         [SerializeField] private UnityEngine.ScriptableObject _toDoApplicationObject;
         [SerializeField] public ToDoElement _toDoElementPrefab;
         private Application<ToDoState> ToDoApplication => _toDoApplicationObject as Application<ToDoState>;
         private readonly IList<ToDoElement> _toDoElementObjectList = new List<ToDoElement>();
-        
+
         private ScrollRect _scrollRect;
         private ScrollRect ScrollRect => _scrollRect ?? (_scrollRect = GetComponent<ScrollRect>());
 
-        public void OnCompleted()
-        {
-        }
+        private int[] _toDoIds = new int[0];
 
-        public void OnError(Exception error)
+        private void HandleChange()
         {
-            Debug.LogError(error);
-        }
+            var toDoIds = State.GetFilterToDos().Select(todo => todo.Id).ToArray();
+            if (toDoIds.SequenceEqual(_toDoIds)) return;
+            _toDoIds = toDoIds;
 
-        public void OnNext(ToDo[] value)
-        {
-            var _toDoIds = value.Select(todo => todo.Id).ToArray();
             if (_toDoIds.Length < _toDoElementObjectList.Count)
             {
                 for (var i = _toDoElementObjectList.Count - 1; i >= _toDoIds.Length; i--)
                 {
                     var toDoElement = _toDoElementObjectList[i];
-                    toDoElement.Dispose();
                     toDoElement.gameObject.SetActive(false);
                 }
             }
@@ -54,9 +49,6 @@ namespace UniRedux.Sample.ScriptableObject.UI
             }
         }
 
-        protected override void Start()
-        {
-            ToDoSelector.FilterToDos(ToDoApplication?.CurrentStore).Subscribe(this);
-        }
+        protected override IStore<ToDoState> CurrentStore => ToDoApplication.CurrentStore;
     }
 }

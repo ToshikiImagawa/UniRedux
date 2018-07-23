@@ -26,7 +26,7 @@ namespace UniRedux
             }
         }
 
-        private IStore<TState> _store;
+        private readonly IStore<TState> _store;
 
         /// <summary>
         /// Current store
@@ -41,7 +41,7 @@ namespace UniRedux
 
         protected Application()
         {
-            if (InitStore == null) throw new System.ArgumentNullException("InitStore", "Cannot set property of null.");
+            if (InitStore == null) throw new System.ArgumentNullException(nameof(InitStore), "Cannot set property of null.");
             _store = InitStore;
         }
     }
@@ -66,7 +66,7 @@ namespace UniRedux
 
         private void OnEnable()
         {
-            if (InitStore == null) throw new System.ArgumentNullException("InitStore", "Cannot set property of null.");
+            if (InitStore == null) throw new System.ArgumentNullException(nameof(InitStore), "Cannot set property of null.");
             _store = InitStore;
         }
     }

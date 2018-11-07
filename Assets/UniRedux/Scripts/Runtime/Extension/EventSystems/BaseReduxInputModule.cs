@@ -11,7 +11,7 @@ namespace UniRedux.EventSystems
         private IExecuteReduxEventSystem _eventSystem;
 
         protected IExecuteReduxEventSystem EventSystem =>
-            _eventSystem ?? (_eventSystem = GetComponent(typeof(IExecuteReduxEventSystem)) as IExecuteReduxEventSystem);
+            _eventSystem ?? (_eventSystem = GetComponent<IExecuteReduxEventSystem>());
 
         /// <summary>
         /// Current Store

@@ -39,24 +39,20 @@ namespace UniRedux.EventSystems
         {
             if (gameObject == null) return;
 
-            var currentComponent = gameObject.GetComponent(typeof(IReduxEventSystemSubscriber));
-            if (currentComponent != null)
             {
-                var rxBehaviour = currentComponent as IReduxEventSystemSubscriber;
+                var rxBehaviour = gameObject.GetComponent<IReduxEventSystemSubscriber>();
                 if (rxBehaviour != null)
                 {
-                    InternalSubscribeEventSystem(currentComponent,
+                    InternalSubscribeEventSystem(rxBehaviour as Component,
                         disposable => { rxBehaviour.SubscribeEventSystem(disposable); }
                     );
                 }
             }
 
-            var components = gameObject.GetComponentsInChildren(typeof(IReduxEventSystemSubscriber));
-            foreach (var component in components)
+            foreach (var rxBehaviour in gameObject.GetComponentsInChildren<IReduxEventSystemSubscriber>())
             {
-                var rxBehaviour = component as IReduxEventSystemSubscriber;
                 if (rxBehaviour == null) continue;
-                InternalSubscribeEventSystem(component,
+                InternalSubscribeEventSystem(rxBehaviour as Component,
                     disposable => { rxBehaviour.SubscribeEventSystem(disposable); }
                 );
             }
@@ -137,14 +133,13 @@ namespace UniRedux.EventSystems
             }
 
             while (executeRxEventSystemQueue.Count != 0) executeRxEventSystemQueue.Dequeue()?.Invoke(this);
-            var components = gameObject.scene.GetRootGameObjects()?.SelectMany(obj
-                                 => obj.GetComponentsInChildren(typeof(IReduxEventSystemSubscriber))
-                             ).ToArray() ?? Array.Empty<Component>();
-            foreach (var component in components)
+            var rxBehaviours = gameObject.scene.GetRootGameObjects()?.SelectMany(
+                                       obj => obj.GetComponentsInChildren<IReduxEventSystemSubscriber>())
+                                   .ToArray() ?? Array.Empty<IReduxEventSystemSubscriber>();
+            foreach (var rxBehaviour in rxBehaviours)
             {
-                var rxBehaviour = component as IReduxEventSystemSubscriber;
                 if (rxBehaviour == null) continue;
-                InternalSubscribeEventSystem(component,
+                InternalSubscribeEventSystem(rxBehaviour as Component,
                     disposable => { rxBehaviour.SubscribeEventSystem(disposable); }
                 );
             }

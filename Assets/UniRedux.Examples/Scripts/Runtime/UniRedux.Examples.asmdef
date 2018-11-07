@@ -1,0 +1,8 @@
+{
+    "name": "UniRedux.Examples",
+    "references": [
+        "UniRedux"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

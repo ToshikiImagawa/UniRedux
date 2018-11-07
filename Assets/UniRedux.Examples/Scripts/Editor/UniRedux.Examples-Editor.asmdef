@@ -1,0 +1,14 @@
+{
+    "name": "UniRedux.Examples-Editor",
+    "references": [
+        "UniRedux",
+        "UniRedux.Examples",
+        "UniRedux-Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

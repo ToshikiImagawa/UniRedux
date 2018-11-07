@@ -35,3 +35,25 @@ sysinfo.txt
 
 # VsCode
 /.vscode/
+
+# idea
+.idea/**/*
+Assets/Plugins/Editor/**/*
+Assets/Plugins/Editor.meta
+
+# UniRx
+Assets/Plugins/UniRx/**/*
+Assets/Plugins/UniRx.meta
+
+# Zenject
+Assets/Plugins/Zenject/**/*
+Assets/Plugins/Zenject.meta
+
+# BuildPackage
+!UniRedux.unitypackage
+!UniRedux.Examples.unitypackage
+!UniRedux.Zenject.unitypackage
+!UniRedux.Zenject.Examples.unitypackage
+
+# Editor Default Resources
+!"Editor Default Resources.unitypackage"

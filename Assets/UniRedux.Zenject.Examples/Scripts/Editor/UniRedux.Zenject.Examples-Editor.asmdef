@@ -1,0 +1,16 @@
+{
+    "name": "UniRedux.Zenject.Examples-Editor",
+    "references": [
+        "UniRedux.Zenject.Examples",
+        "UniRedux.Zenject-Editor",
+        "UniRedux",
+        "Zenject",
+        "UniRedux-Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

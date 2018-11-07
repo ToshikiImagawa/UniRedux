@@ -1,0 +1,9 @@
+{
+    "name": "UniRedux.Zenject.Examples",
+    "references": [
+        "UniRedux",
+        "Zenject"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

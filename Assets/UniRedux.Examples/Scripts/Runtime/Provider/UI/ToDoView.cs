@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRedux.Examples;
-using UniRedux.Provider;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UniRedux.Provider.Examples
 {
-    [RequireComponent(typeof(ScrollRect))]
+    [RequireComponent(typeof(ScrollRect)), BindUniReduxContainer("ToDoContainer")]
     public class ToDoView : MonoBehaviour, IUniReduxComponent
     {
         [SerializeField] private ToDoElement toDoElementPrefab;
@@ -19,7 +18,7 @@ namespace UniRedux.Provider.Examples
         private ToDoElement.Factory _factory;
         private Dictionary<int, ToDo> _toDos;
         private ToDoFilter _filter;
-        
+
         [UniReduxInject]
         private Dictionary<int, ToDo> ToDos
         {
@@ -30,7 +29,7 @@ namespace UniRedux.Provider.Examples
                 Render();
             }
         }
-        
+
         [UniReduxInject]
         private ToDoFilter Filter
         {
@@ -41,7 +40,7 @@ namespace UniRedux.Provider.Examples
                 Render();
             }
         }
-        
+
 
         private ScrollRect ScrollRect
             => _scrollRect != null ? _scrollRect : (_scrollRect = GetComponent<ScrollRect>());
@@ -51,7 +50,6 @@ namespace UniRedux.Provider.Examples
         private void Awake()
         {
             _factory = new ToDoElement.Factory(toDoElementPrefab);
-            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
         }
 
         private void OnDestroy()

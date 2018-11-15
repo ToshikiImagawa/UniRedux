@@ -8,7 +8,8 @@ namespace UniRedux.Provider.Examples
     public class CompleteButton : Button, IUniReduxComponent
     {
         private int _toDoId = -1;
-        
+        private IDisposable _disposable;
+
         [UniReduxInject]
         private Action<int> ToggleCompletedToDo { get; set; }
 
@@ -28,7 +29,12 @@ namespace UniRedux.Provider.Examples
 #if UNITY_EDITOR
             if (!Application.isPlaying) return;
 #endif
-            ToDoApp.ToDoViewStateStateContainer.Inject(this);
+            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
+        }
+
+        protected override void OnDestroy()
+        {
+            _disposable?.Dispose();
         }
     }
 }

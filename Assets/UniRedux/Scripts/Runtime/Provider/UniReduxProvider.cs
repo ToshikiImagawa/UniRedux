@@ -29,6 +29,7 @@ namespace UniRedux.Provider
 
         public static void SetSetting(Setting setting, bool autoBooting = true)
         {
+            if (_setting != null) return;
             _setting = setting;
             if (_setting == null) throw Assert.CreateException("UniReduxProvider setting file is not defined.");
             if (autoBooting) Boot();

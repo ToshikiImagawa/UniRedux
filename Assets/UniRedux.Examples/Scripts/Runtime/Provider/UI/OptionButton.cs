@@ -5,6 +5,7 @@ using System;
 
 namespace UniRedux.Provider.Examples
 {
+    [BindUniReduxContainer("ToDoContainer")]
     public class OptionButton : Button, IUniReduxComponent
     {
         [SerializeField] private OptionType _optionType;
@@ -43,14 +44,6 @@ namespace UniRedux.Provider.Examples
         {
             Run();
             base.OnPointerDown(eventData);
-        }
-
-        protected override void Awake()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) return;
-#endif
-            ToDoApp.ToDoViewStateStateContainer.Inject(this);
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Provider.Examples
 {
+    [BindUniReduxContainer("ToDoContainer")]
     public class SortButton : Button, IUniReduxComponent
     {
         [SerializeField] private ToDoFilter filterType;
@@ -23,14 +24,6 @@ namespace UniRedux.Provider.Examples
                 _filter = value;
                 Render();
             }
-        }
-
-        protected override void Awake()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) return;
-#endif
-            ToDoApp.ToDoViewStateStateContainer.Inject(this);
         }
 
         private void Run()

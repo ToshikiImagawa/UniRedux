@@ -5,6 +5,7 @@ using System;
 
 namespace UniRedux.Provider.Examples
 {
+    [BindUniReduxContainer("ToDoContainer")]
     public class AddToDoButton : Button, IUniReduxComponent
     {
         [SerializeField] private InputField _toDoMessageInputField;
@@ -32,14 +33,6 @@ namespace UniRedux.Provider.Examples
         {
             Run();
             base.OnPointerDown(eventData);
-        }
-
-        protected override void Awake()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) return;
-#endif
-            ToDoApp.ToDoViewStateStateContainer.Inject(this);
         }
     }
 }

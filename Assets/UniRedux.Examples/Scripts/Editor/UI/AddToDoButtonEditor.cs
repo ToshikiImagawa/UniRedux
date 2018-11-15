@@ -4,9 +4,9 @@ using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Examples.Editor
+namespace UniRedux.Examples.Application.Editor
 {
-    [CustomEditor(typeof(AddToDoButton), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(AddToDoButtonBase), true), CanEditMultipleObjects]
     public class AddToDoButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()

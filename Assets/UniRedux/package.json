@@ -1,0 +1,10 @@
+{
+    "name": "com.comcreate-info.uni_redux",
+    "displayName": "UniRedux",
+    "version": "1.0.0",
+    "unity": "2018.1",
+    "description": "This is UniRedux Package.",
+    "keywords": ["Script", "Test"],
+    "category": "Controllers",
+    "dependencies": { }
+}

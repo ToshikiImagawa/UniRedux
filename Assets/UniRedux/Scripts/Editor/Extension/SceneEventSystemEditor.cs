@@ -20,14 +20,5 @@ namespace UniRedux.Editor
                 EditorGUILayout.ObjectField(targetObject, typeof(GameObject), true);
             }
         }
-
-        private void OnSceneGUI()
-        {
-            var editorGuiUtilityType = typeof(EditorGUIUtility);
-            var icon = EditorGUIUtility.ObjectContent(null, typeof(UnityEngine.EventSystems.EventSystem)).image;
-            const BindingFlags bindingFlags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
-            var args = new object[] {target, icon};
-            editorGuiUtilityType.InvokeMember("SetIconForObject", bindingFlags, null, null, args);
-        }
     }
 }

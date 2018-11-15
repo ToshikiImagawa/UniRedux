@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Examples.Editor
 {
-    [CustomEditor(typeof(SelectedToggle), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(SelectedToggleBase), true), CanEditMultipleObjects]
     public class SelectedToggleEditor : ToggleEditor
     {
         private void OnSceneGUI()

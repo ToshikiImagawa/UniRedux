@@ -126,8 +126,8 @@ namespace UniRedux.Editor
                 case ColumnIndex.StateName:
                     var spaceRect = cellRect;
                     spaceRect.x += uniReduxTreeModel.Element.StateDepth * 18f + 20;
-                    var pass = $"UniRedux/icon_{uniReduxTreeModel.Element.ObjectType.ToString()}.png";
-                    var texture = EditorGUIUtility.Load(pass) as Texture;
+                    var pass = $"{UniReduxEditorUtility.PackageRelativePath}/Editor Resources/Textures/icon_{uniReduxTreeModel.Element.ObjectType}.psd";
+                    var texture = AssetDatabase.LoadAssetAtPath(pass, typeof(Texture2D)) as Texture2D;
                     var textureRect = spaceRect;
                     textureRect.width = textureRect.height;
                     spaceRect.x += textureRect.width + 5;

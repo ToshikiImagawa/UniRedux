@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Examples.Editor
 {
-    [CustomEditor(typeof(SortButton), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(SortButtonBase), true), CanEditMultipleObjects]
     public class SortButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()

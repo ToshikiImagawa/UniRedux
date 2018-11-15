@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Examples.Editor
 {
-    [CustomEditor(typeof(CompleteButton), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(CompleteButtonBase), true), CanEditMultipleObjects]
     public class CompleteButtonEditor : ButtonEditor
     {
         private void OnSceneGUI()

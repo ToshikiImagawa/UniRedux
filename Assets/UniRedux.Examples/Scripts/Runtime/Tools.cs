@@ -5,71 +5,23 @@ using System;
 
 namespace UniRedux.Examples
 {
-    public static class Util
-    {
-        public static T[] Empty<T>()
-        {
-            return (T[]) Enumerable.Empty<T>();
-        }
-
-        /// <summary>
-        /// Create disposer
-        /// </summary>
-        /// <param name="disposeListener"></param>
-        /// <returns></returns>
-        public static IDisposable CreateDisposer(Action disposeListener)
-        {
-            return new Disposer(disposeListener);
-        }
-
-        private class Disposer : IDisposable
-        {
-            private Action _disposeListener;
-
-            public Disposer(Action disposeListener)
-            {
-                _disposeListener = disposeListener;
-            }
-
-            private bool disposedValue = false;
-
-            protected virtual void Dispose(bool disposing)
-            {
-                if (!disposedValue)
-                {
-                    if (disposing)
-                    {
-                        _disposeListener?.Invoke();
-                    }
-
-                    disposedValue = true;
-                }
-            }
-
-            void IDisposable.Dispose()
-            {
-                Dispose(true);
-            }
-        }
-    }
-
     public static class CacheComponent
     {
-        private static IDictionary<string, Component> _cacheComponents = new Dictionary<string, Component>();
+        private static readonly IDictionary<string, Component> CacheComponents = new Dictionary<string, Component>();
 
         public static T GetComponentFindNameInChildren<T>(this Component component, string name) where T : Component
         {
             return component.gameObject.GetComponentFindNameInChildren<T>(name);
         }
 
-        public static T GetComponentFindNameInChildren<T>(this GameObject gameObject, string name) where T : Component
+        private static T GetComponentFindNameInChildren<T>(this GameObject gameObject, string name) where T : Component
         {
             var key = $"{gameObject.GetInstanceID()}__{name}__{typeof(T).Name}";
-            if (_cacheComponents.ContainsKey(key)) return _cacheComponents[key] as T;
+            if (CacheComponents.ContainsKey(key)) return CacheComponents[key] as T;
 
             var components = gameObject.GetComponentsInChildren<T>(false);
             var hitComponent = components.FirstOrDefault(component => component.gameObject.name == name);
-            if (hitComponent != null) _cacheComponents.Add(key, hitComponent);
+            if (hitComponent != null) CacheComponents.Add(key, hitComponent);
             return hitComponent;
         }
     }

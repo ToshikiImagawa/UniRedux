@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Examples.Editor
 {
-    [CustomEditor(typeof(OptionButton), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(OptionButtonBase), true), CanEditMultipleObjects]
     public class OptionButtonEditor : ButtonEditor
     {
         public override void OnInspectorGUI()

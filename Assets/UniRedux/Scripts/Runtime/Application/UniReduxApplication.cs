@@ -40,8 +40,15 @@ namespace UniRedux
 
         private void OnEnable()
         {
+            BeforeInit();
             CurrentStore = CrateStore;
+            AfterInit();
         }
+        
+        /// <summary> Before init Store </summary>
+        protected virtual void BeforeInit(){}
+        /// <summary> After init Store </summary>
+        protected virtual void AfterInit(){}
 
         [ContextMenu("Reboot Application")]
         public void Reboot()

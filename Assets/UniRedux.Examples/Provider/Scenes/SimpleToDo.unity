@@ -1365,8 +1365,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monoContainerInstaller: []
-  scriptableObjectContainerInstaller:
-  - {fileID: 11400000, guid: a05525b80d6e9c744bf4702aa8b272fb, type: 2}
+  scriptableObjectContainerInstaller: []
+  parentSceneNames: []
+  bindComponents: []
 --- !u!4 &837691197
 Transform:
   m_ObjectHideFlags: 0

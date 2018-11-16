@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace UniRedux.Provider
 {
@@ -14,6 +11,8 @@ namespace UniRedux.Provider
         [SerializeField] private List<BindComponent> bindComponents = new List<BindComponent>();
 #endif
 
+        private const string ProjectContainerBundlePath = "ProjectContainerBundle";
+
         private ProjectContainerBundle _projectContainer;
         private IUniReduxComponent[] _uniReduxComponents;
         private readonly object _containersLock = new object();
@@ -23,6 +22,7 @@ namespace UniRedux.Provider
 
         internal static void InjectComponent(string containerName, IUniReduxComponent component)
         {
+            if (string.IsNullOrEmpty(containerName)) return;
             if (!Instance._containers.ContainsKey(containerName)) return;
             lock (Instance._containersLock)
             {
@@ -47,8 +47,14 @@ namespace UniRedux.Provider
             }
         }
 
-        private void Awake()
+        public void Awake()
         {
+            if (Application.isPlaying) DontDestroyOnLoad(gameObject);
+        }
+
+        private void Initialize()
+        {
+            if (_containers.Count > 0) throw Assert.CreateException();
             foreach (var containerInstaller in monoContainerInstaller)
             {
                 containerInstaller.InstallBindings(this);
@@ -80,32 +86,59 @@ namespace UniRedux.Provider
             get
             {
                 if (_instance != null) return _instance;
-
-                _instance = SceneManager.GetActiveScene().GetRootGameObjects()
-                    ?.FirstOrDefault(obj => obj.GetComponent<ProjectContainerBundle>() != null)
-                    ?.GetComponent<ProjectContainerBundle>();
-
-                if (_instance == null)
-                {
-                    var prefab = Resources.Load<ProjectContainerBundle>("ProjectContainerBundle");
-                    _instance = prefab != null
-                        ? Instantiate(prefab)
-                        : new GameObject().AddComponent<ProjectContainerBundle>();
-                }
-
-                DontDestroyOnLoad(_instance);
-                _instance.name = "ProjectContainerBundle";
+                InstantiateAndInitialize();
                 return _instance;
             }
         }
 
-#if UNITY_EDITOR
-        [Serializable]
-        public struct BindComponent
+        private static void InstantiateAndInitialize()
         {
-            [HideInInspector] public string ContainerName;
-            public Component Component;
+            var prefabWasActive = false;
+            var prefab = TryGetPrefab();
+            if (prefab == null)
+            {
+                _instance = new GameObject("ProjectContainerBundle")
+                    .AddComponent<ProjectContainerBundle>();
+            }
+            else
+            {
+                prefabWasActive = prefab.activeSelf;
+
+                GameObject gameObjectInstance;
+                if (prefabWasActive)
+                {
+                    prefab.SetActive(false);
+                    gameObjectInstance = Instantiate(prefab);
+                    prefab.SetActive(true);
+                }
+                else
+                {
+                    gameObjectInstance = Instantiate(prefab);
+                }
+
+                _instance = gameObjectInstance.GetComponent<ProjectContainerBundle>();
+                if (_instance == null) throw Assert.CreateException();
+                _instance.name = "ProjectContainerBundle";
+            }
+
+            _instance.Initialize();
+            if (prefabWasActive)
+            {
+                _instance.gameObject.SetActive(true);
+            }
         }
-#endif
+
+        private static GameObject TryGetPrefab()
+        {
+            var prefabs = Resources.LoadAll(ProjectContainerBundlePath, typeof(GameObject));
+
+            if (prefabs.Length <= 0) return null;
+            if (prefabs.Length != 1)
+                throw Assert.CreateException(
+                    $"Found multiple project context prefabs at resource path '{ProjectContainerBundlePath}'"
+                );
+
+            return (GameObject) prefabs[0];
+        }
     }
 }

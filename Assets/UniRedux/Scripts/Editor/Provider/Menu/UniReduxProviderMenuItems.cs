@@ -1,5 +1,11 @@
+using System;
+using System.IO;
 using System.Linq;
+using UniRedux.Provider;
 using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace UniRedux.Editor.Menu.Provider
 {
@@ -26,7 +32,7 @@ namespace UniRedux.Editor.Menu.Provider
 
             UniReduxMenuItems.CreateTemplateFile(friendlyName, folderPath, defaultFileName, templateStr);
         }
-        
+
         [MenuItem("Assets/Create/UniRedux/Provider/Create ScriptableObjectContainerInstaller", false)]
         public static void CreateScriptableObjectContainerInstaller()
         {
@@ -47,6 +53,36 @@ namespace UniRedux.Editor.Menu.Provider
                                        + "\n}";
 
             UniReduxMenuItems.CreateTemplateFile(friendlyName, folderPath, defaultFileName, templateStr);
+        }
+
+        [MenuItem("Assets/Create/UniRedux/Provider/ProjectContainerBundle", false, priority = 30)]
+        public static void CreatePrefab()
+        {
+            var path = UniReduxEditorUtility.GetSelectDirectoryPath;
+
+            if (string.IsNullOrEmpty(path) || Path.GetFileName(path) != "Resources") throw Assert.CreateException();
+
+            var gameObject =
+                EditorUtility.CreateGameObjectWithHideFlags("ProjectContainerBundle",
+                    HideFlags.HideInHierarchy);
+            gameObject.AddComponent<ProjectContainerBundle>();
+            PrefabUtility.CreatePrefab(
+                $"{UniReduxEditorUtility.ConvertFullAbsolutePathToAssetPath(path)}/ProjectContainerBundle.prefab",
+                gameObject);
+            Object.DestroyImmediate(gameObject);
+        }
+
+        [MenuItem("GameObject/UniRedux/Provider/SceneContainerBundle", false, priority = 10)]
+        public static void CreateSceneEventSystem()
+        {
+            var gameObject = SceneManager.GetActiveScene().GetRootGameObjects()
+                .FirstOrDefault(obj => obj.gameObject.name == "SceneContainerBundle");
+            if (gameObject != null) throw Assert.CreateException("SceneContainerBundle exists on scene.");
+            gameObject = new GameObject("SceneContainerBundle");
+            gameObject.AddComponent<SceneContainerBundle>();
+            gameObject.transform.localScale = Vector3.one;
+            gameObject.transform.localPosition = Vector3.zero;
+            gameObject.transform.localRotation = Quaternion.identity;
         }
     }
 }

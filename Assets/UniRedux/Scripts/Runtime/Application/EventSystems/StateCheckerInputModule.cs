@@ -64,7 +64,7 @@ namespace UniRedux.EventSystems
 
         private void ExecuteChecker(Type executeType)
         {
-            if (!_checkers.ContainsKey(executeType)) Assert.CreateException();
+            if (!_checkers.ContainsKey(executeType)) throw Assert.CreateException();
             if (!_checkers[executeType].IsNewValue(CurrentStore.GetState())) return;
             var executeEventsExecutor = _executeEventsExecutors[executeType];
             EventSystem.Execute(executeType, executeEventsExecutor);

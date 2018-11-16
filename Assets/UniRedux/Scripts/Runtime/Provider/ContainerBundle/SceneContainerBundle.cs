@@ -10,12 +10,16 @@ namespace UniRedux.Provider
     {
         [SerializeField] private MonoContainerInstaller[] monoContainerInstaller;
         [SerializeField] private ScriptableObjectContainerInstaller[] scriptableObjectContainerInstaller;
+        [SerializeField] private string[] parentSceneNames = Array.Empty<string>();
 
         private IUniReduxComponent[] _uniReduxComponents;
         private readonly object _containersLock = new object();
 
         private readonly Dictionary<string, IUniReduxContainer> _containers =
             new Dictionary<string, IUniReduxContainer>();
+
+        private IEnumerable<SceneContainerBundle> ParentSceneContainerBundles =>
+            SceneUtil.FindAllLoadedScenes(parentSceneNames).GetSceneContainerBundles();
 
 #if UNITY_EDITOR
         [SerializeField] private List<BindComponent> bindComponents = new List<BindComponent>();
@@ -49,26 +53,40 @@ namespace UniRedux.Provider
                 if (attribute == null) continue;
                 foreach (var containerName in attribute.ContainerNames)
                 {
-                    if (string.IsNullOrEmpty(containerName)) continue;
-                    lock (_containersLock)
-                    {
-                        if (_containers.ContainsKey(containerName))
-                        {
-                            _containers[containerName].Inject(uniReduxComponent);
-#if UNITY_EDITOR
-                            bindComponents.Add(
-                                new BindComponent
-                                {
-                                    ContainerName = containerName,
-                                    Component = uniReduxComponent as Component
-                                }
-                            );
-#endif
-                            continue;
-                        }
-                    }
+                    InjectComponent(containerName, uniReduxComponent);
+                }
+            }
+        }
 
-                    ProjectContainerBundle.InjectComponent(containerName, uniReduxComponent);
+        private void InjectComponent(string containerName, IUniReduxComponent uniReduxComponent)
+        {
+            if (string.IsNullOrEmpty(containerName)) return;
+            lock (_containersLock)
+            {
+                if (_containers.ContainsKey(containerName))
+                {
+                    _containers[containerName].Inject(uniReduxComponent);
+#if UNITY_EDITOR
+                    bindComponents.Add(
+                        new BindComponent
+                        {
+                            ContainerName = containerName,
+                            Component = uniReduxComponent as Component
+                        }
+                    );
+#endif
+                    return;
+                }
+            }
+
+            var parentSceneContainerBundles = ParentSceneContainerBundles.ToArray();
+            if (parentSceneContainerBundles.Length == 0)
+                ProjectContainerBundle.InjectComponent(containerName, uniReduxComponent);
+            else
+            {
+                foreach (var sceneContainerBundle in parentSceneContainerBundles)
+                {
+                    sceneContainerBundle.InjectComponent(containerName, uniReduxComponent);
                 }
             }
         }
@@ -93,24 +111,5 @@ namespace UniRedux.Provider
                 _containers.Clear();
             }
         }
-
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("GameObject/UniRedux/SceneContainerBundle", false, priority = 10)]
-        public static void CreateSceneEventSystem()
-        {
-            var gameObject = new GameObject("SceneContainerBundle");
-            gameObject.AddComponent<SceneContainerBundle>();
-            gameObject.transform.localScale = Vector3.one;
-            gameObject.transform.localPosition = Vector3.zero;
-            gameObject.transform.localRotation = Quaternion.identity;
-        }
-
-        [Serializable]
-        public struct BindComponent
-        {
-            [HideInInspector] public string ContainerName;
-            public Component Component;
-        }
-#endif
     }
 }

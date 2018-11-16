@@ -63,8 +63,7 @@ namespace UniRedux.Provider
         internal static IStore<TState> GetStore<TState>()
         {
             if (!typeof(TState).TypeHandle.Equals(StateType))
-                Assert.CreateException(
-                    $"The type of State is different. {typeof(TState)} != {StateType}(Store)");
+                throw Assert.CreateException($"The type of State is different. {typeof(TState)} != {StateType}(Store)");
 
             return Store as IStore<TState>;
         }

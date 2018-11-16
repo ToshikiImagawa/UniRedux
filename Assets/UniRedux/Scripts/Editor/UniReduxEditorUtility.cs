@@ -1,15 +1,17 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UniRedux.Editor
 {
     public static class UniReduxEditorUtility
     {
-        [SerializeField]
-        private static string _packagePath;
+        [SerializeField] private static string _packagePath;
 
-        [SerializeField]
-        private static string _packageFullPath;
+        [SerializeField] private static string _packageFullPath;
 
         private static string _folderPath = "Not Found";
 
@@ -39,6 +41,51 @@ namespace UniRedux.Editor
 
                 return _packageFullPath;
             }
+        }
+
+        /// <summary>
+        /// Select top directory path
+        /// </summary>
+        public static string GetSelectDirectoryPath
+        {
+            get
+            {
+                return Selection.GetFiltered(
+                    typeof(Object), SelectionMode.Assets
+                ).SelectMany(item =>
+                {
+                    var assetPath = AssetDatabase.GetAssetPath(item);
+                    return string.IsNullOrEmpty(assetPath)
+                        ? Array.Empty<string>()
+                        : new[]
+                        {
+                            Path.GetFullPath(Path.Combine(
+                                UnityEngine.Application.dataPath, Path.Combine("..", assetPath)))
+                        };
+                }).Where(Directory.Exists).FirstOrDefault();
+            }
+        }
+        
+        /// <summary>
+        /// Convert full absolute path to AssetPath
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        /// <exception cref="ReduxException"></exception>
+        public static string ConvertFullAbsolutePathToAssetPath(string fullPath)
+        {
+            fullPath = Path.GetFullPath(fullPath);
+
+            var assetFolderFullPath = Path.GetFullPath(UnityEngine.Application.dataPath);
+
+            if (fullPath.Length == assetFolderFullPath.Length)
+            {
+                if (fullPath != assetFolderFullPath) throw Assert.CreateException();
+                return "Assets";
+            }
+
+            var assetPath = fullPath.Remove(0, assetFolderFullPath.Length + 1).Replace("\\", "/");
+            return "Assets/" + assetPath;
         }
 
         private static string GetPackageRelativePath()
@@ -85,10 +132,12 @@ namespace UniRedux.Editor
                 {
                     return packagePath + "/Assets/Packages/com.comcreate-info.uni_redux";
                 }
+
                 if (Directory.Exists(packagePath + "/Assets/UniRedux/Editor Resources"))
                 {
                     return packagePath + "/Assets/UniRedux";
                 }
+
                 string[] matchingPaths = Directory.GetDirectories(packagePath, "UniRedux", SearchOption.AllDirectories);
                 string path = ValidateLocation(matchingPaths, packagePath);
                 if (path != null) return packagePath + path;

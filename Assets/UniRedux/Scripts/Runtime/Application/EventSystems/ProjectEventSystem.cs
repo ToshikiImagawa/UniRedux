@@ -188,17 +188,5 @@ namespace UniRedux.EventSystems
                 }
             }
         }
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("Assets/Create/UniRedux/ProjectEventSystem", priority = 30)]
-        public static void CreatePrefab()
-        {
-            var gameObject =
-                UnityEditor.EditorUtility.CreateGameObjectWithHideFlags("ProjectEventSystem",
-                    HideFlags.HideInHierarchy);
-            gameObject.AddComponent<ProjectEventSystem>();
-            UnityEditor.PrefabUtility.CreatePrefab("Assets/Resources/ProjectEventSystem.prefab", gameObject);
-            DestroyImmediate(gameObject);
-        }
-#endif
     }
 }

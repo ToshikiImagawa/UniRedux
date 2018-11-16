@@ -160,7 +160,7 @@ namespace UniRedux.EventSystems
         }
 
 #if UNITY_EDITOR
-        [UnityEditor.MenuItem("GameObject/UniRedux/SceneEventSystem", false, priority = 10)]
+        [UnityEditor.MenuItem("GameObject/UniRedux/Application/SceneEventSystem", false, priority = 10)]
         public static void CreateSceneEventSystem()
         {
             var gameObject = new GameObject("SceneEventSystem");

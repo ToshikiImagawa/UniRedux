@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using UniRedux.EventSystems;
+﻿using UniRedux.EventSystems;
 using UnityEditor;
 using UnityEngine;
 
-namespace UniRedux.Editor
+namespace UniRedux.Editor.Application
 {
     [CustomEditor(typeof(SceneEventSystem))]
     public class SceneEventSystemEditor : UnityEditor.Editor

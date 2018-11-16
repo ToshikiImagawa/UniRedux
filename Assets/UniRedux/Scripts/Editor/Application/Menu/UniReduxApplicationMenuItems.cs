@@ -1,5 +1,8 @@
+using System.IO;
 using System.Linq;
+using UniRedux.EventSystems;
 using UnityEditor;
+using UnityEngine;
 
 namespace UniRedux.Editor.Menu.Application
 {
@@ -23,5 +26,22 @@ namespace UniRedux.Editor.Menu.Application
 
             UniReduxMenuItems.CreateTemplateFile(friendlyName, folderPath, defaultFileName, templateStr);
         }
+        
+#if UNITY_EDITOR
+        [MenuItem("Assets/Create/UniRedux/Application/ProjectEventSystem", priority = 30)]
+        public static void CreatePrefab()
+        {
+            var path = UniReduxEditorUtility.GetSelectDirectoryPath;
+
+            if (string.IsNullOrEmpty(path) || Path.GetFileName(path) != "Resources") throw Assert.CreateException();
+
+            var gameObject =
+                EditorUtility.CreateGameObjectWithHideFlags("ProjectEventSystem",
+                    HideFlags.HideInHierarchy);
+            gameObject.AddComponent<ProjectEventSystem>();
+            PrefabUtility.CreatePrefab($"{UniReduxEditorUtility.ConvertFullAbsolutePathToAssetPath(path)}/ProjectEventSystem.prefab", gameObject);
+            Object.DestroyImmediate(gameObject);
+        }
+#endif
     }
 }

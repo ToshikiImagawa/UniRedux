@@ -593,7 +593,7 @@ namespace UniRedux.Provider
             public void OnError(Exception error)
             {
                 _isCompleted = true;
-                Assert.CreateException($"{error}");
+                throw Assert.CreateException($"{error}");
             }
 
             public void OnNext(TLocalState value)

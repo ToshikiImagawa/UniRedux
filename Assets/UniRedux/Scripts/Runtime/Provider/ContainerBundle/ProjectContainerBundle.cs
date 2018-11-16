@@ -10,6 +10,9 @@ namespace UniRedux.Provider
     {
         [SerializeField] private MonoContainerInstaller[] monoContainerInstaller;
         [SerializeField] private ScriptableObjectContainerInstaller[] scriptableObjectContainerInstaller;
+#if UNITY_EDITOR
+        [SerializeField] private List<BindComponent> bindComponents = new List<BindComponent>();
+#endif
 
         private ProjectContainerBundle _projectContainer;
         private IUniReduxComponent[] _uniReduxComponents;
@@ -21,9 +24,26 @@ namespace UniRedux.Provider
         internal static void InjectComponent(string containerName, IUniReduxComponent component)
         {
             if (!Instance._containers.ContainsKey(containerName)) return;
-            lock(Instance._containersLock)
+            lock (Instance._containersLock)
             {
                 Instance._containers[containerName].Inject(component);
+#if UNITY_EDITOR
+                Instance.bindComponents.Add(
+                    new BindComponent
+                    {
+                        ContainerName = containerName,
+                        Component = component as Component
+                    }
+                );
+#endif
+            }
+        }
+
+        void IContainerBundle.SetUniReduxContainer(string containerName, IUniReduxContainer container)
+        {
+            lock (_containersLock)
+            {
+                _containers[containerName] = container;
             }
         }
 
@@ -37,39 +57,6 @@ namespace UniRedux.Provider
             foreach (var containerInstaller in scriptableObjectContainerInstaller)
             {
                 containerInstaller.InstallBindings(this);
-            }
-
-            InjectComponent();
-        }
-
-        private void InjectComponent()
-        {
-            var uniReduxComponents = gameObject.scene.GetRootGameObjects()?.SelectMany(
-                                             obj => obj.GetComponentsInChildren<IUniReduxComponent>(true))
-                                         .ToArray() ?? Array.Empty<IUniReduxComponent>();
-            foreach (var uniReduxComponent in uniReduxComponents)
-            {
-                var attribute = uniReduxComponent.GetType()
-                    .GetCustomAttributes(typeof(BindUniReduxContainerAttribute), true)
-                    .FirstOrDefault() as BindUniReduxContainerAttribute;
-                if (attribute == null) return;
-                foreach (var containerName in attribute.ContainerNames)
-                {
-                    if (string.IsNullOrEmpty(containerName)) continue;
-                    lock (_containersLock)
-                    {
-                        if (!_containers.ContainsKey(containerName)) continue;
-                        _containers[containerName].Inject(uniReduxComponent);
-                    }
-                }
-            }
-        }
-
-        void IContainerBundle.SetUniReduxContainer(string containerName, IUniReduxContainer container)
-        {
-            lock (_containersLock)
-            {
-                _containers[containerName] = container;
             }
         }
 
@@ -111,5 +98,14 @@ namespace UniRedux.Provider
                 return _instance;
             }
         }
+
+#if UNITY_EDITOR
+        [Serializable]
+        public struct BindComponent
+        {
+            [HideInInspector] public string ContainerName;
+            public Component Component;
+        }
+#endif
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UniRedux.Provider
 {
@@ -17,9 +18,8 @@ namespace UniRedux.Provider
             new Dictionary<string, IUniReduxContainer>();
 
 #if UNITY_EDITOR
-        [SerializeField] private List<BindComponent> _bindComponents = new List<BindComponent>();
+        [SerializeField] private List<BindComponent> bindComponents = new List<BindComponent>();
 #endif
-
 
         private void Awake()
         {
@@ -38,7 +38,7 @@ namespace UniRedux.Provider
 
         private void InjectComponent()
         {
-            var uniReduxComponents = gameObject.scene.GetRootGameObjects()?.SelectMany(
+            var uniReduxComponents = SceneManager.GetActiveScene().GetRootGameObjects()?.SelectMany(
                                              obj => obj.GetComponentsInChildren<IUniReduxComponent>(true))
                                          .ToArray() ?? Array.Empty<IUniReduxComponent>();
             foreach (var uniReduxComponent in uniReduxComponents)
@@ -56,7 +56,7 @@ namespace UniRedux.Provider
                         {
                             _containers[containerName].Inject(uniReduxComponent);
 #if UNITY_EDITOR
-                            _bindComponents.Add(
+                            bindComponents.Add(
                                 new BindComponent
                                 {
                                     ContainerName = containerName,

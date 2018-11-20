@@ -17,28 +17,20 @@ namespace UniRedux.Zenject.Examples.Simple
 
         public int ToDoId { get; private set; } = -1;
 
-        private Text _toDoTitle;
-        private Text ToDoTitle => _toDoTitle ?? (_toDoTitle = this.GetComponentFindNameInChildren<Text>("ToDoTitle"));
-        private SelectedToggle _toDoSelecter;
+        private Text ToDoTitle
+            => this.GetComponentFindNameInChildren<Text>("ToDoTitle");
 
         private SelectedToggle ToDoSelectToggle
-            => _toDoSelecter ?? (_toDoSelecter = this.GetComponentFindNameInChildren<SelectedToggle>("Selecter"));
-
-        private CompleteButton _completeButton;
+            => this.GetComponentFindNameInChildren<SelectedToggle>("Selector");
 
         private CompleteButton CompleteButton
-            =>
-                _completeButton ??
-                (_completeButton = this.GetComponentFindNameInChildren<CompleteButton>("CompleteButton"));
+            => this.GetComponentFindNameInChildren<CompleteButton>("CompleteButton");
 
         [Inject]
         private void Injection(IStore<ToDoState> store)
         {
             _store = store;
-            _disposable = _store.Subscribe(state =>
-            {
-                HandleChange();
-            });
+            _disposable = _store.Subscribe(state => { HandleChange(); });
         }
 
         protected override void OnDestroy()

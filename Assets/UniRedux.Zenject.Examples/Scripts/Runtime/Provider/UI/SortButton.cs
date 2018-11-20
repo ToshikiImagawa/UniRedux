@@ -1,19 +1,23 @@
-﻿using System;
-using UniRedux.Examples;
+using UniRedux.Provider;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
-namespace UniRedux.Provider.Examples
+namespace UniRedux.Zenject.Examples.Provider
 {
     public class SortButton : Button, IUniReduxComponent
     {
-        [SerializeField] private ToDoFilter filterType;
-
-        private IDisposable _disposable;
         private ToDoFilter _filter;
+        [SerializeField] private ToDoFilter filterType;
 
         [UniReduxInject]
         private Dispatcher Dispatch { get; set; }
+
+        [Inject]
+        private void Injection([Inject(Id = "ToDoViewContainer")] IUniReduxContainer container)
+        {
+            container.Inject(this);
+        }
 
 
         [UniReduxInject]
@@ -29,12 +33,12 @@ namespace UniRedux.Provider.Examples
 
         private void Run()
         {
-            Dispatch?.Invoke(ToDoActionCreator.ChangeToDoFilter(filterType));
+            DispatchAction();
         }
 
-        private void Render()
+        private void DispatchAction()
         {
-            interactable = Filter != filterType;
+            Dispatch(ToDoActionCreator.ChangeToDoFilter(filterType));
         }
 
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
@@ -43,14 +47,9 @@ namespace UniRedux.Provider.Examples
             base.OnPointerDown(eventData);
         }
 
-        protected override void Awake()
+        private void Render()
         {
-            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
-        }
-
-        protected override void OnDestroy()
-        {
-            _disposable?.Dispose();
+            interactable = Filter != filterType;
         }
     }
 }

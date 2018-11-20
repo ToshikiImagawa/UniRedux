@@ -5,11 +5,11 @@ using System;
 
 namespace UniRedux.Provider.Examples
 {
-    [BindUniReduxContainer("ToDoContainer")]
     public class OptionButton : Button, IUniReduxComponent
     {
         [SerializeField] private OptionType _optionType;
         private bool _toggle = true;
+        private IDisposable _disposable;
 
         [UniReduxInject]
         private Action RemoveSelectedTodo { get; set; }
@@ -44,6 +44,16 @@ namespace UniRedux.Provider.Examples
         {
             Run();
             base.OnPointerDown(eventData);
+        }
+
+        protected override void Awake()
+        {
+            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
+        }
+
+        protected override void OnDestroy()
+        {
+            _disposable?.Dispose();
         }
     }
 }

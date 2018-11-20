@@ -5,12 +5,12 @@ using System;
 
 namespace UniRedux.Provider.Examples
 {
-    [BindUniReduxContainer("ToDoContainer")]
     public class AddToDoButton : Button, IUniReduxComponent
     {
         [SerializeField] private InputField _toDoMessageInputField;
 
         private IToDoMessageInputModule _toDoMessageInputModule;
+        private IDisposable _disposable;
 
         private IToDoMessageInputModule ToDoMessageInputModule =>
             _toDoMessageInputModule ??
@@ -33,6 +33,16 @@ namespace UniRedux.Provider.Examples
         {
             Run();
             base.OnPointerDown(eventData);
+        }
+
+        protected override void Awake()
+        {
+            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
+        }
+
+        protected override void OnDestroy()
+        {
+            _disposable?.Dispose();
         }
     }
 }

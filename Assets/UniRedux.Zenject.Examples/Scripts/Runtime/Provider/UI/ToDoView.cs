@@ -1,26 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRedux.Examples;
-using UnityEngine;
+using UniRedux.Provider;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Zenject;
 
-namespace UniRedux.Provider.Examples
+namespace UniRedux.Zenject.Examples.Provider
 {
-    [RequireComponent(typeof(ScrollRect))]
-    public class ToDoView : MonoBehaviour, IUniReduxComponent
+    public class ToDoView : UIBehaviour, IUniReduxComponent
     {
-        [SerializeField] private ToDoElement toDoElementPrefab;
+        [Inject] private ToDoElement.Pool _toDoElementPool;
 
         private IDisposable _disposable;
 
         private ScrollRect _scrollRect;
-        private ToDoElement.Factory _factory;
-        private Dictionary<int, ToDo> _toDos;
+        private ToDo[] _toDos;
         private ToDoFilter _filter;
 
         [UniReduxInject]
-        private Dictionary<int, ToDo> ToDos
+        private ToDo[] FilterToDos
         {
             get { return _toDos; }
             set
@@ -30,37 +29,25 @@ namespace UniRedux.Provider.Examples
             }
         }
 
-        [UniReduxInject]
-        private ToDoFilter Filter
-        {
-            get { return _filter; }
-            set
-            {
-                _filter = value;
-                Render();
-            }
-        }
-
-
         private ScrollRect ScrollRect
             => _scrollRect != null ? _scrollRect : (_scrollRect = GetComponent<ScrollRect>());
 
         private readonly IList<ToDoElement> _toDoElementObjectList = new List<ToDoElement>();
 
-        private void Awake()
+        [Inject]
+        private void Injection([Inject(Id = "ToDoViewContainer")] IUniReduxContainer container)
         {
-            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
-            _factory = new ToDoElement.Factory(toDoElementPrefab);
+            _disposable = container.Inject(this);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             _disposable?.Dispose();
         }
 
         private void Render()
         {
-            var toDoIds = ToDos.GetFilterToDos(Filter).Select(todo => todo.Id).ToArray();
+            var toDoIds = FilterToDos.Select(todo => todo.Id).ToArray();
 
             if (toDoIds.Length < _toDoElementObjectList.Count)
             {
@@ -68,12 +55,14 @@ namespace UniRedux.Provider.Examples
                 {
                     var toDoElement = _toDoElementObjectList[i];
                     toDoElement.gameObject.SetActive(false);
+                    _toDoElementPool.Despawn(toDoElement);
+                    _toDoElementObjectList.Remove(toDoElement);
                 }
             }
 
             while (toDoIds.Length > _toDoElementObjectList.Count)
             {
-                var toDoElement = _factory.Create(ScrollRect.content.transform);
+                var toDoElement = _toDoElementPool.Spawn(ScrollRect.content.transform);
                 _toDoElementObjectList.Add(toDoElement);
             }
 

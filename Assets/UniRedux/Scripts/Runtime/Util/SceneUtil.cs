@@ -27,16 +27,6 @@ namespace UniRedux
         public static IEnumerable<Scene> FindAllLoadedScenes(string[] parentSceneNames) =>
             AllLoadedScenes.Where(scene => parentSceneNames.Contains(scene.name));
 
-        public static IEnumerable<SceneContainerBundle> GetSceneContainerBundles(this IEnumerable<Scene> scenes)
-        {
-            return from parentScene in scenes
-                select parentScene.GetRootGameObjects()
-                    .FirstOrDefault(obj => obj.GetComponent<SceneContainerBundle>() != null)
-                into sceneContainerBundle
-                where sceneContainerBundle != null
-                select sceneContainerBundle.GetComponent<SceneContainerBundle>();
-        }
-
         public static IEnumerable<IUniReduxComponent> GetUniReduxComponents(this Scene self)
         {
             return self.GetRootGameObjects()?.SelectMany(

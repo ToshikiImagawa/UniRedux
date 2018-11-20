@@ -17,7 +17,7 @@ namespace UniRedux.Zenject.Examples.Provider.Installers
                 .FromComponentInNewPrefab(toDoElement)
                 .UnderTransformGroup("ToDoElement");
             Container.Bind<IUniReduxContainer>().WithId("ToDoViewContainer")
-                .FromInstance(ToDoApp.ToDoViewContainer);
+                .FromInstance(ToDoApp.ToDoViewContainer).AsSingle();
         }
     }
 }

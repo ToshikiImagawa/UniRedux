@@ -1,20 +1,21 @@
-﻿using UniRedux.Examples;
+﻿using System;
+using UniRedux.Examples;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UniRedux.Provider.Examples
 {
-    [BindUniReduxContainer("ToDoContainer")]
     public class SortButton : Button, IUniReduxComponent
     {
         [SerializeField] private ToDoFilter filterType;
-        
+
+        private IDisposable _disposable;
         private ToDoFilter _filter;
 
         [UniReduxInject]
         private Dispatcher Dispatch { get; set; }
-        
-        
+
+
         [UniReduxInject]
         private ToDoFilter Filter
         {
@@ -40,6 +41,16 @@ namespace UniRedux.Provider.Examples
         {
             Run();
             base.OnPointerDown(eventData);
+        }
+
+        protected override void Awake()
+        {
+            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
+        }
+
+        protected override void OnDestroy()
+        {
+            _disposable?.Dispose();
         }
     }
 }

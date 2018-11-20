@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UniRedux.Rx;
 using UniSystem.Reactive.Disposables;
+using UnityEngine;
 
 namespace UniRedux.Provider
 {
@@ -38,6 +39,9 @@ namespace UniRedux.Provider
 
             public override IDisposable Inject(IUniReduxComponent component)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) return null;
+#endif
                 component.InjectDispatcher();
 
                 var componentProperties = component.GetType()
@@ -161,6 +165,9 @@ namespace UniRedux.Provider
 
             public override IDisposable Inject(IUniReduxComponent component)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) return null;
+#endif
                 component.InjectDispatcher();
 
                 var componentProperties = component.GetType()
@@ -305,6 +312,9 @@ namespace UniRedux.Provider
 
             public virtual IDisposable Inject(IUniReduxComponent component)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) return null;
+#endif
                 component.InjectDispatcher();
                 return Disposable.Empty;
             }
@@ -326,6 +336,9 @@ namespace UniRedux.Provider
 
             public override IDisposable Inject(IUniReduxComponent component)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) return null;
+#endif
                 component.InjectDispatcher();
 
                 var componentProperties = component.GetType().GetUniReduxInjectProperties();
@@ -446,6 +459,9 @@ namespace UniRedux.Provider
 
             public override IDisposable Inject(IUniReduxComponent component)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) return null;
+#endif
                 component.InjectDispatcher();
 
                 var componentProperties = component.GetType()

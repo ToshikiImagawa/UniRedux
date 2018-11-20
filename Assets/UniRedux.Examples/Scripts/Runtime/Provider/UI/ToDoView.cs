@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace UniRedux.Provider.Examples
 {
-    [RequireComponent(typeof(ScrollRect)), BindUniReduxContainer("ToDoContainer")]
+    [RequireComponent(typeof(ScrollRect))]
     public class ToDoView : MonoBehaviour, IUniReduxComponent
     {
         [SerializeField] private ToDoElement toDoElementPrefab;
@@ -49,6 +49,7 @@ namespace UniRedux.Provider.Examples
 
         private void Awake()
         {
+            _disposable = ToDoApp.ToDoViewStateStateContainer.Inject(this);
             _factory = new ToDoElement.Factory(toDoElementPrefab);
         }
 

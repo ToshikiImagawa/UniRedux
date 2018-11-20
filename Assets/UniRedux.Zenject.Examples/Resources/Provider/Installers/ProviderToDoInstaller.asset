@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519d6fdc692447d38c916144e48f95de, type: 3}
+  m_Name: ProviderToDoInstaller
+  m_EditorClassIdentifier: 
+  _toDoElement: {fileID: 114926890934885398, guid: 8f19660000584214db3cda6a6b1b022c,
+    type: 2}

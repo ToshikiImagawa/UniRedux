@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRedux.Provider;
@@ -34,6 +35,13 @@ namespace UniRedux
                 into sceneContainerBundle
                 where sceneContainerBundle != null
                 select sceneContainerBundle.GetComponent<SceneContainerBundle>();
+        }
+
+        public static IEnumerable<IUniReduxComponent> GetUniReduxComponents(this Scene self)
+        {
+            return self.GetRootGameObjects()?.SelectMany(
+                    obj => obj.GetComponentsInChildren<IUniReduxComponent>(true))
+                .ToArray() ?? Array.Empty<IUniReduxComponent>();
         }
     }
 }

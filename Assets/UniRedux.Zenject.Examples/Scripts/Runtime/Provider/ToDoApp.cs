@@ -15,7 +15,11 @@ namespace UniRedux.Zenject.Examples.Provider
 
         static ToDoApp()
         {
-            UniReduxProvider.SetSetting(new ToDoProviderSetting());
+            UniReduxProvider.SetStore(Redux.CreateStore(
+                ToDoReducer.Execute, ToDoReducer.InitState,
+                UniReduxMiddleware.Logger,
+                UniReduxMiddleware.CheckImmutableUpdate
+            ));
         }
     }
 }

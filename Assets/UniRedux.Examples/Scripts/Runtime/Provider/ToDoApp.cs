@@ -8,7 +8,11 @@ namespace UniRedux.Provider.Examples
 
         static ToDoApp()
         {
-            UniReduxProvider.SetSetting(new ToDoProviderSetting());
+            UniReduxProvider.SetStore(Redux.CreateStore(
+                ToDoReducer.Execute, ToDoReducer.InitState,
+                UniReduxMiddleware.Logger,
+                UniReduxMiddleware.CheckImmutableUpdate
+            ));
             ToDoViewStateStateContainer = UniReduxContainer<ToDoState>.Connect(
             state => new ToDoLocalState
             {

@@ -5,7 +5,7 @@ namespace UniRedux.Examples.Application
     [CreateAssetMenu(fileName = "UniReduxApplication", menuName = "UniRedux/Applications/ToDoApplication")]
     public class ToDoApplication : UniReduxApplication<ToDoState>
     {
-        protected override IStore<ToDoState> CrateStore => Redux.CreateStore(
+        protected override IStore<ToDoState> CreateStore => Redux.CreateStore(
             ToDoReducer.Execute, ToDoReducer.InitState,
             UniReduxMiddleware.Logger,
             UniReduxMiddleware.CheckImmutableUpdate

@@ -33,15 +33,15 @@ namespace UniRedux
         /// <summary> Current store </summary>
         public virtual IStore<TState> CurrentStore { get; protected set; }
 
-        /// <summary> Crate store </summary>
-        protected abstract IStore<TState> CrateStore { get; }
+        /// <summary> Create store </summary>
+        protected abstract IStore<TState> CreateStore { get; }
 
         IStore IReduxApplication.CurrentStore => CurrentStore;
 
         private void OnEnable()
         {
             BeforeInit();
-            CurrentStore = CrateStore;
+            CurrentStore = CreateStore;
             AfterInit();
         }
         
@@ -54,7 +54,7 @@ namespace UniRedux
         public void Reboot()
         {
             CurrentStore?.Dispose();
-            CurrentStore = CrateStore;
+            CurrentStore = CreateStore;
         }
 
         [ContextMenu("Shutdown Application")]

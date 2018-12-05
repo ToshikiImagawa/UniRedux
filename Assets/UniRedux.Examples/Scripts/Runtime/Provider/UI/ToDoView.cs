@@ -16,31 +16,6 @@ namespace UniRedux.Provider.Examples
 
         private ScrollRect _scrollRect;
         private ToDoElement.Factory _factory;
-        private Dictionary<int, ToDo> _toDos;
-        private ToDoFilter _filter;
-
-        [UniReduxInject]
-        private Dictionary<int, ToDo> ToDos
-        {
-            get { return _toDos; }
-            set
-            {
-                _toDos = value;
-                Render();
-            }
-        }
-
-        [UniReduxInject]
-        private ToDoFilter Filter
-        {
-            get { return _filter; }
-            set
-            {
-                _filter = value;
-                Render();
-            }
-        }
-
 
         private ScrollRect ScrollRect
             => _scrollRect != null ? _scrollRect : (_scrollRect = GetComponent<ScrollRect>());
@@ -58,9 +33,12 @@ namespace UniRedux.Provider.Examples
             _disposable?.Dispose();
         }
 
-        private void Render()
+        [UniReduxInject]
+        private void Render([UniReduxInject(PropertyName = "ToDos")]
+            Dictionary<int, ToDo> toDos, [UniReduxInject(PropertyName = "Filter")]
+            ToDoFilter filter)
         {
-            var toDoIds = ToDos.GetFilterToDos(Filter).Select(todo => todo.Id).ToArray();
+            var toDoIds = toDos.GetFilterToDos(filter).Select(todo => todo.Id).ToArray();
 
             if (toDoIds.Length < _toDoElementObjectList.Count)
             {

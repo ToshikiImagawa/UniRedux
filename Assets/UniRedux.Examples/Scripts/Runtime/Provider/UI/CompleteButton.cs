@@ -10,8 +10,8 @@ namespace UniRedux.Provider.Examples
         private int _toDoId = -1;
         private IDisposable _disposable;
 
-        [UniReduxInject]
-        private Action<int> ToggleCompletedToDo { get; set; }
+        [UniReduxInject(PropertyName = "ToggleCompletedToDo")]
+        private Action<int> ToggleCompleted { get; set; }
 
         public void Init(int toDoId)
         {
@@ -20,7 +20,7 @@ namespace UniRedux.Provider.Examples
 
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)
         {
-            ToggleCompletedToDo?.Invoke(_toDoId);
+            ToggleCompleted?.Invoke(_toDoId);
             base.OnPointerDown(eventData);
         }
 

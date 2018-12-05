@@ -24,6 +24,11 @@ namespace UniRedux.Provider
             return self?.GetProperties(PrivateAndPublicBindingFlags) ?? Array.Empty<PropertyInfo>();
         }
 
+        public static MethodInfo[] GetPrivateAndPublicMethods(this Type self)
+        {
+            return self?.GetMethods(PrivateAndPublicBindingFlags) ?? Array.Empty<MethodInfo>();
+        }
+
         public static PropertyInfo[] GetPublicProperties(this Type self)
         {
             return self?.GetProperties(PublicBindingFlags) ?? Array.Empty<PropertyInfo>();
@@ -47,6 +52,21 @@ namespace UniRedux.Provider
                         property, typeof(UniReduxInjectAttribute)
                     ) != null
                 ).ToArray();
+        }
+
+        public static MethodInfo[] GetUniReduxInjectMethods(this Type self)
+        {
+            return self?.GetPrivateAndPublicMethods()
+                .Where(method =>
+                    Attribute.GetCustomAttribute(
+                        method, typeof(UniReduxInjectAttribute)
+                    ) != null
+                ).ToArray();
+        }
+
+        public static object GetDefault(this Type self)
+        {
+            return self.IsValueType ? Activator.CreateInstance(self) : null;
         }
     }
 }

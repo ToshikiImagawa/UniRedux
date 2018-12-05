@@ -31,8 +31,20 @@ namespace UniRedux.Provider
             if (componentMethodInfo == null || valueMethodInfo == null || component == null) return;
             componentMethodInfo.Invoke(component, new[]
             {
-                valueMethodInfo.Invoke(value, null)
+                value == null
+                    ? valueMethodInfo.ReturnType.GetDefault()
+                    : valueMethodInfo.Invoke(value, null)
             });
+        }
+
+        public static void SetMethod<TValue>(this IUniReduxComponent component, TValue value,
+            MethodInfo componentMethodInfo, MethodInfo[] valueMethodInfos)
+        {
+            if (componentMethodInfo == null || valueMethodInfos == null || component == null) return;
+            componentMethodInfo.Invoke(component, valueMethodInfos.Select(
+                valueMethodInfo => value == null
+                    ? valueMethodInfo.ReturnType.GetDefault()
+                    : valueMethodInfo.Invoke(value, null)).ToArray());
         }
 
         public static void InjectActionDispatcher<TActionDispatcher>(this IUniReduxComponent component,
@@ -41,7 +53,12 @@ namespace UniRedux.Provider
         {
             var actionDispatcherProperties =
                 typeof(TActionDispatcher).GetPublicProperties();
-            var methodPairs = componentProperties.Join(actionDispatcherProperties, info => info.Name,
+            var methodPairs = componentProperties.Join(actionDispatcherProperties,
+                    info =>
+                        string.IsNullOrEmpty(info.GetCustomAttribute<UniReduxInjectAttribute>()
+                            ?.PropertyName)
+                            ? info.Name
+                            : info.GetCustomAttribute<UniReduxInjectAttribute>()?.PropertyName,
                     info => info.Name,
                     (componentProperty, actionDispatcherProperty)
                         => new Tuple<PropertyInfo, PropertyInfo>(

@@ -44,10 +44,14 @@ namespace UniRedux.Provider
 #endif
                 component.InjectDispatcher();
 
-                var componentProperties = component.GetType()
+                var componentType = component.GetType();
+                var componentProperties = componentType
                     .GetUniReduxInjectProperties();
+                var componentMethods = componentType
+                    .GetUniReduxInjectMethods();
+
                 var observer = new UniReduxContainer.Observer<TLocalState>(
-                    component, _localStateProperties, componentProperties
+                    component, _localStateProperties, componentProperties, componentMethods
                 );
                 return InnerSubscribe(observer);
             }
@@ -170,13 +174,17 @@ namespace UniRedux.Provider
 #endif
                 component.InjectDispatcher();
 
-                var componentProperties = component.GetType()
+                var componentType = component.GetType();
+                var componentProperties = componentType
                     .GetUniReduxInjectProperties();
+                var componentMethods = componentType
+                    .GetUniReduxInjectMethods();
 
                 component.InjectActionDispatcher(componentProperties, _actionDispatcher);
 
                 var observer =
-                    new UniReduxContainer.Observer<TLocalState>(component, _localStateProperties, componentProperties);
+                    new UniReduxContainer.Observer<TLocalState>(component, _localStateProperties, componentProperties,
+                        componentMethods);
                 return InnerSubscribe(observer);
             }
 
@@ -341,8 +349,13 @@ namespace UniRedux.Provider
 #endif
                 component.InjectDispatcher();
 
-                var componentProperties = component.GetType().GetUniReduxInjectProperties();
-                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties);
+                var componentType = component.GetType();
+                var componentProperties = componentType
+                    .GetUniReduxInjectProperties();
+                var componentMethods = componentType
+                    .GetUniReduxInjectMethods();
+                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties,
+                    componentMethods);
                 try
                 {
                     lock (_syncRoot)
@@ -464,12 +477,16 @@ namespace UniRedux.Provider
 #endif
                 component.InjectDispatcher();
 
-                var componentProperties = component.GetType()
+                var componentType = component.GetType();
+                var componentProperties = componentType
                     .GetUniReduxInjectProperties();
+                var componentMethods = componentType
+                    .GetUniReduxInjectMethods();
 
                 component.InjectActionDispatcher(componentProperties, _actionDispatcher);
 
-                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties);
+                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties,
+                    componentMethods);
                 return InnerSubscribe(observer);
             }
 
@@ -582,16 +599,20 @@ namespace UniRedux.Provider
         internal sealed class Observer<TLocalState> : IObserver<TLocalState>
         {
             private readonly IUniReduxComponent _component;
-            private readonly Tuple<MethodInfo, MethodInfo>[] _methodInfoPairs;
+            private readonly Tuple<MethodInfo, MethodInfo>[] _propertyMethodInfoPairs;
+            private readonly Tuple<MethodInfo, MethodInfo[]>[] _methodMethodInfoPairs;
+
             private bool _isCompleted;
 
-            public Observer(IUniReduxComponent component, IEnumerable<PropertyInfo> localStateProperties,
-                IEnumerable<PropertyInfo> componentProperties)
+            public Observer(IUniReduxComponent component, PropertyInfo[] localStateProperties,
+                IEnumerable<PropertyInfo> componentProperties, IEnumerable<MethodInfo> componentMethods)
             {
                 _component = component;
-                _methodInfoPairs = componentProperties.Join(
+                _propertyMethodInfoPairs = componentProperties.Join(
                         localStateProperties,
-                        info => info.Name, info => info.Name,
+                        info => string.IsNullOrEmpty(info.GetCustomAttribute<UniReduxInjectAttribute>().PropertyName)
+                            ? info.Name
+                            : info.GetCustomAttribute<UniReduxInjectAttribute>().PropertyName, info => info.Name,
                         (componentProp, localStateProp) => new Tuple<PropertyInfo, PropertyInfo>(
                             componentProp, localStateProp
                         )).Where(pair => pair.Item1.PropertyType == pair.Item2.PropertyType)
@@ -599,6 +620,21 @@ namespace UniRedux.Provider
                         pair.Item1.GetSetMethod(true), pair.Item2.GetGetMethod()
                     )).Where(pair => pair.Item1 != null && pair.Item2 != null)
                     .ToArray();
+                _methodMethodInfoPairs = componentMethods.Select(info =>
+                {
+                    var parameters = info.GetParameters();
+                    return new Tuple<MethodInfo, MethodInfo[]>(info, parameters.Select(parameterInfo =>
+                    {
+                        var name = string.IsNullOrEmpty(parameterInfo.GetCustomAttribute<UniReduxInjectAttribute>()
+                            ?.PropertyName)
+                            ? parameterInfo.Name
+                            : parameterInfo.GetCustomAttribute<UniReduxInjectAttribute>()?.PropertyName;
+                        var hit = localStateProperties.FirstOrDefault(propertyInfo =>
+                            propertyInfo.Name == name && propertyInfo.PropertyType == parameterInfo.ParameterType);
+                        if (hit == null) throw Assert.CreateException();
+                        return hit.GetGetMethod();
+                    }).ToArray());
+                }).ToArray();
             }
 
             public void OnCompleted()
@@ -616,9 +652,14 @@ namespace UniRedux.Provider
             {
                 if (_isCompleted) return;
 
-                foreach (var methodInfoPair in _methodInfoPairs)
+                foreach (var methodInfoPair in _propertyMethodInfoPairs)
                 {
                     _component.SetProperty(value, methodInfoPair.Item1, methodInfoPair.Item2);
+                }
+
+                foreach (var methodInfoPair in _methodMethodInfoPairs)
+                {
+                    _component.SetMethod(value, methodInfoPair.Item1, methodInfoPair.Item2);
                 }
             }
         }

@@ -28,7 +28,6 @@ namespace UniRedux.Provider
         {
             private readonly MapStateProps<TState, TLocalState> _mapStateProps;
             private readonly IEqualityComparer<TLocalState> _equalityComparer;
-            private readonly PropertyInfo[] _localStateProperties;
 
             private readonly object _syncRoot = new object();
             private ListObserver<TLocalState> _listObserver = ListObserver.Empty<TLocalState>();
@@ -43,16 +42,7 @@ namespace UniRedux.Provider
                 if (!Application.isPlaying) return null;
 #endif
                 component.InjectDispatcher();
-
-                var componentType = component.GetType();
-                var componentProperties = componentType
-                    .GetUniReduxInjectProperties();
-                var componentMethods = componentType
-                    .GetUniReduxInjectMethods();
-
-                var observer = new UniReduxContainer.Observer<TLocalState>(
-                    component, _localStateProperties, componentProperties, componentMethods
-                );
+                var observer = new UniReduxContainer.Observer<TLocalState>(component);
                 return InnerSubscribe(observer);
             }
 
@@ -102,7 +92,6 @@ namespace UniRedux.Provider
                 _mapStateProps = mapStateProps;
                 _equalityComparer = EqualityComparer<TLocalState>.Default;
                 _disposable = mapStateProps == null ? null : UniReduxProvider.GetStore<TState>().Subscribe(OnNext);
-                _localStateProperties = typeof(TLocalState).GetPublicProperties();
             }
 
             private void OnNext(VoidMessage v)
@@ -157,7 +146,6 @@ namespace UniRedux.Provider
         {
             private readonly MapStateProps<TState, TLocalState> _mapStateProps;
             private readonly IEqualityComparer<TLocalState> _equalityComparer;
-            private readonly PropertyInfo[] _localStateProperties;
             private readonly TActionDispatcher _actionDispatcher;
 
             private readonly object _syncRoot = new object();
@@ -177,14 +165,10 @@ namespace UniRedux.Provider
                 var componentType = component.GetType();
                 var componentProperties = componentType
                     .GetUniReduxInjectProperties();
-                var componentMethods = componentType
-                    .GetUniReduxInjectMethods();
 
                 component.InjectActionDispatcher(componentProperties, _actionDispatcher);
 
-                var observer =
-                    new UniReduxContainer.Observer<TLocalState>(component, _localStateProperties, componentProperties,
-                        componentMethods);
+                var observer = new UniReduxContainer.Observer<TLocalState>(component);
                 return InnerSubscribe(observer);
             }
 
@@ -236,7 +220,6 @@ namespace UniRedux.Provider
                 _mapStateProps = mapStateProps;
                 _equalityComparer = EqualityComparer<TLocalState>.Default;
                 _disposable = UniReduxProvider.GetStore<TState>().Subscribe(OnNext);
-                _localStateProperties = typeof(TLocalState).GetPublicProperties();
                 _actionDispatcher = mapDispatchProps?.Invoke(UniReduxProvider.GetStore<TState>().Dispatch);
             }
 
@@ -332,8 +315,8 @@ namespace UniRedux.Provider
             where TParentContainerState : class where TLocalState : class
         {
             private readonly MapStateProps<TParentContainerState, TLocalState> _mapStateProps;
+
             private readonly IEqualityComparer<TLocalState> _equalityComparer;
-            private readonly PropertyInfo[] _localStateProperties;
 
             private readonly object _syncRoot = new object();
             private ListObserver<TLocalState> _listObserver = ListObserver.Empty<TLocalState>();
@@ -349,13 +332,7 @@ namespace UniRedux.Provider
 #endif
                 component.InjectDispatcher();
 
-                var componentType = component.GetType();
-                var componentProperties = componentType
-                    .GetUniReduxInjectProperties();
-                var componentMethods = componentType
-                    .GetUniReduxInjectMethods();
-                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties,
-                    componentMethods);
+                var observer = new Observer<TLocalState>(component);
                 try
                 {
                     lock (_syncRoot)
@@ -395,7 +372,6 @@ namespace UniRedux.Provider
             {
                 _mapStateProps = mapStateProps;
                 _equalityComparer = EqualityComparer<TLocalState>.Default;
-                _localStateProperties = typeof(TLocalState).GetPublicProperties();
 
                 var observable = parentContainer as IUniReduxContainerObservable<TParentContainerState>;
                 if (observable != null && mapStateProps != null)
@@ -459,8 +435,9 @@ namespace UniRedux.Provider
             where TActionDispatcher : class
         {
             private readonly MapStateProps<TParentContainerState, TLocalState> _mapStateProps;
+
             private readonly IEqualityComparer<TLocalState> _equalityComparer;
-            private readonly PropertyInfo[] _localStateProperties;
+
             private readonly TActionDispatcher _actionDispatcher;
 
             private readonly object _syncRoot = new object();
@@ -480,13 +457,10 @@ namespace UniRedux.Provider
                 var componentType = component.GetType();
                 var componentProperties = componentType
                     .GetUniReduxInjectProperties();
-                var componentMethods = componentType
-                    .GetUniReduxInjectMethods();
 
                 component.InjectActionDispatcher(componentProperties, _actionDispatcher);
 
-                var observer = new Observer<TLocalState>(component, _localStateProperties, componentProperties,
-                    componentMethods);
+                var observer = new Observer<TLocalState>(component);
                 return InnerSubscribe(observer);
             }
 
@@ -538,7 +512,6 @@ namespace UniRedux.Provider
                 if (mapStateProps == null) return;
                 _mapStateProps = mapStateProps;
                 _equalityComparer = EqualityComparer<TLocalState>.Default;
-                _localStateProperties = typeof(TLocalState).GetPublicProperties();
                 _actionDispatcher =
                     mapDispatchProps?.Invoke(UniReduxProvider.GetStore<TParentContainerState>().Dispatch);
 
@@ -599,42 +572,12 @@ namespace UniRedux.Provider
         internal sealed class Observer<TLocalState> : IObserver<TLocalState>
         {
             private readonly IUniReduxComponent _component;
-            private readonly Tuple<MethodInfo, MethodInfo>[] _propertyMethodInfoPairs;
-            private readonly Tuple<MethodInfo, MethodInfo[]>[] _methodMethodInfoPairs;
 
             private bool _isCompleted;
 
-            public Observer(IUniReduxComponent component, PropertyInfo[] localStateProperties,
-                IEnumerable<PropertyInfo> componentProperties, IEnumerable<MethodInfo> componentMethods)
+            public Observer(IUniReduxComponent component)
             {
                 _component = component;
-                _propertyMethodInfoPairs = componentProperties.Join(
-                        localStateProperties,
-                        info => string.IsNullOrEmpty(info.GetCustomAttribute<UniReduxInjectAttribute>().PropertyName)
-                            ? info.Name
-                            : info.GetCustomAttribute<UniReduxInjectAttribute>().PropertyName, info => info.Name,
-                        (componentProp, localStateProp) => new Tuple<PropertyInfo, PropertyInfo>(
-                            componentProp, localStateProp
-                        )).Where(pair => pair.Item1.PropertyType == pair.Item2.PropertyType)
-                    .Select(pair => new Tuple<MethodInfo, MethodInfo>(
-                        pair.Item1.GetSetMethod(true), pair.Item2.GetGetMethod()
-                    )).Where(pair => pair.Item1 != null && pair.Item2 != null)
-                    .ToArray();
-                _methodMethodInfoPairs = componentMethods.Select(info =>
-                {
-                    var parameters = info.GetParameters();
-                    return new Tuple<MethodInfo, MethodInfo[]>(info, parameters.Select(parameterInfo =>
-                    {
-                        var name = string.IsNullOrEmpty(parameterInfo.GetCustomAttribute<UniReduxInjectAttribute>()
-                            ?.PropertyName)
-                            ? parameterInfo.Name
-                            : parameterInfo.GetCustomAttribute<UniReduxInjectAttribute>()?.PropertyName;
-                        var hit = localStateProperties.FirstOrDefault(propertyInfo =>
-                            propertyInfo.Name == name && propertyInfo.PropertyType == parameterInfo.ParameterType);
-                        if (hit == null) throw Assert.CreateException();
-                        return hit.GetGetMethod();
-                    }).ToArray());
-                }).ToArray();
             }
 
             public void OnCompleted()
@@ -652,15 +595,7 @@ namespace UniRedux.Provider
             {
                 if (_isCompleted) return;
 
-                foreach (var methodInfoPair in _propertyMethodInfoPairs)
-                {
-                    _component.SetProperty(value, methodInfoPair.Item1, methodInfoPair.Item2);
-                }
-
-                foreach (var methodInfoPair in _methodMethodInfoPairs)
-                {
-                    _component.SetMethod(value, methodInfoPair.Item1, methodInfoPair.Item2);
-                }
+                ComponentLocator.SetValue(_component, value);
             }
         }
     }

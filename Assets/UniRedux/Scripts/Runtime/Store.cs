@@ -172,7 +172,7 @@ namespace UniRedux
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (dictionary.ContainsKey(key)) throw new ArgumentException(nameof(dictionary));
-            return new Dictionary<TKey, TValue>(dictionary) {{key, item}};
+            return new Dictionary<TKey, TValue>(dictionary) { { key, item } };
         }
 
         public static Dictionary<TKey, TValue> RemoveItem<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
@@ -195,7 +195,7 @@ namespace UniRedux
             TKey key, TValue item)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            var newDictionary = new Dictionary<TKey, TValue>(dictionary) {[key] = item};
+            var newDictionary = new Dictionary<TKey, TValue>(dictionary) { [key] = item };
             return newDictionary;
         }
 
@@ -252,10 +252,16 @@ namespace UniRedux
     public interface IStore : IObservable<VoidMessage>, IDisposable
     {
         /// <summary>
+        /// Get the state type
+        /// </summary>
+        /// <returns></returns>
+        Type GetStateType();
+
+        /// <summary>
         /// Get the state
         /// </summary>
         /// <returns></returns>
-        object GetState(Type type);
+        object GetState();
 
 #if UNITY_EDITOR
         /// <summary>
@@ -285,11 +291,9 @@ namespace UniRedux
         private bool _isStopped = false;
         private Exception _lastError;
 
-        public object GetState(Type type)
-        {
-            if (type != typeof(TState)) throw Assert.CreateException("It is different from the type of State");
-            return _lastState;
-        }
+        Type IStore.GetStateType() => typeof(TState);
+
+        object IStore.GetState() => _lastState;
 
 #if UNITY_EDITOR
         object IStore.GetStateForce()

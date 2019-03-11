@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2817404581765876097}
   - component: {fileID: 2814829794718220987}
   - component: {fileID: 2710470298853889835}
-  - component: {fileID: 2707594319425140997}
+  - component: {fileID: 2062625045254796697}
   m_Layer: 5
   m_Name: CompleteButton
   m_TagString: Untagged
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &2707594319425140997
+--- !u!114 &2062625045254796697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2594077114832283967}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68fdbc7fe29043249678fa2d8f5deaa1, type: 3}
+  m_Script: {fileID: 11500000, guid: fb005e84a5d427048a988574a500033f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -128,15 +128,15 @@ GameObject:
   m_Component:
   - component: {fileID: 2817045171142164867}
   - component: {fileID: 7715798508738490995}
-  - component: {fileID: 7818735783108254274}
-  - component: {fileID: 2087842658174158854}
+  - component: {fileID: 7889406021219800564}
+  - component: {fileID: 4863815102835309703}
   m_Layer: 5
   m_Name: ToDo Element
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2817045171142164867
 RectTransform:
   m_ObjectHideFlags: 0
@@ -171,7 +171,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89870a0ac5b360347ab869cf859908f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7818735783108254274
+--- !u!114 &7889406021219800564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2594333404704242273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _components:
+  - {fileID: 7715798508738490995}
+  _identifier: 
+  _useSceneContext: 0
+  _context: {fileID: 4863815102835309703}
+  _bindType: 0
+--- !u!114 &4863815102835309703
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,24 +206,6 @@ MonoBehaviour:
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
---- !u!114 &2087842658174158854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2594333404704242273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _components:
-  - {fileID: 7715798508738490995}
-  _identifier: 
-  _useSceneContext: 0
-  _context: {fileID: 7818735783108254274}
-  _bindType: 0
 --- !u!1 &2594345063492224723
 GameObject:
   m_ObjectHideFlags: 0

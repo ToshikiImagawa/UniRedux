@@ -34,7 +34,7 @@ namespace UniRedux
 
         public object Fire(object originalState)
         {
-            if (originalState.GetType().DerivesFromOrEqual(_bindingId.OriginalStateType)) throw Assert.CreateException();
+            if (!originalState.GetType().DerivesFromOrEqual(_bindingId.OriginalStateType)) throw Assert.CreateException();
             using (var block = DisposeBlock.Spawn())
             {
                 var subscriptions = block.SpawnList<UniReduxSignalSubscription>();

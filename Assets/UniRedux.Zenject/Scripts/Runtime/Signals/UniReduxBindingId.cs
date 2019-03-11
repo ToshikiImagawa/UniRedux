@@ -42,13 +42,12 @@ namespace UniRedux
         }
         public bool Equals(UniReduxBindingId other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other == null) return false;
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other._localStateType)) return false;
-            if (ReferenceEquals(null, other._originalStateType)) return false;
-            return _localStateType == other._localStateType &&
-                _originalStateType == other._originalStateType &&
-                _identifier.Equals(other._identifier);
+            if (other._localStateType != _localStateType) return false;
+            if (other._originalStateType != _originalStateType) return false;
+            if (other._identifier != _identifier) return false;
+            return true;
         }
         public override int GetHashCode()
         {

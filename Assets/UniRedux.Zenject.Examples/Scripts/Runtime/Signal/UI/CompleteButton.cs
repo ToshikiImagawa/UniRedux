@@ -1,16 +1,13 @@
 ﻿using UniRedux.Provider;
 using UnityEngine.UI;
+using Zenject;
 
 namespace UniRedux.Zenject.Examples.Signal
 {
     public class CompleteButton : Button
     {
-        private int _toDoId = -1;
-
-        public void Init(int toDoId)
-        {
-            _toDoId = toDoId;
-        }
+        [Inject]
+        private ToDoElement _element;
 
         private void Run()
         {
@@ -18,9 +15,9 @@ namespace UniRedux.Zenject.Examples.Signal
         }
         private void DispatchAction()
         {
-            if (_toDoId < 0) return;
+            if (_element.ToDoId < 0) return;
 
-            UniReduxProvider.Store.Dispatch(ToDoActionCreator.ToggleCompletedToDo(_toDoId));
+            UniReduxProvider.Store.Dispatch(ToDoActionCreator.ToggleCompletedToDo(_element.ToDoId));
         }
 
         public override void OnPointerDown(UnityEngine.EventSystems.PointerEventData eventData)

@@ -47,17 +47,24 @@ namespace UniRedux.Zenject.Examples.Signal
         private void UpdateDisplay()
         {
             var toDos = FilterToDos;
+            for(var i = _toDoElements.Count - 1;i >= toDos.Length; i--)
+            {
+                var toDoElement = _toDoElements[i];
+                _toDoElements.Remove(toDoElement);
+                _pool.Despawn(toDoElement);
+            }
             for (var i = 0; i < toDos.Length; i++)
             {
                 var toDo = toDos[i];
-                var toDoElement = _toDoElements.Count > i ? _toDoElements[i] : _pool.Spawn(_createPoint);
+                ToDoElement toDoElement;
+                if (_toDoElements.Count > i) toDoElement = _toDoElements[i];
+                else
+                {
+                    toDoElement = _pool.Spawn(_createPoint);
+                    _toDoElements.Add(toDoElement);
+                }
+                toDoElement.transform.SetAsLastSibling();
                 toDoElement.SetId(toDo.Id);
-            }
-            for (var i = _toDoElements.Count - 1; i >= toDos.Length; i--)
-            {
-                var toDoElement = _toDoElements[i];
-                _pool.Despawn(toDoElement);
-                _toDoElements.Remove(toDoElement);
             }
         }
 

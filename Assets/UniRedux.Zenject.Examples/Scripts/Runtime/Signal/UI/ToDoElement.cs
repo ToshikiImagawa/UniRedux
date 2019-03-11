@@ -28,7 +28,7 @@ namespace UniRedux.Zenject.Examples.Signal
         private void UpdateDisplay()
         {
             var hitTodo = UniReduxProvider.GetStore<ToDoState>().GetState().ToDos.FirstOrDefault(todo => todo.Id == ToDoId);
-            if (hitTodo == null) throw Assert.CreateException();
+            if (hitTodo == null) return;
             if (_hitToDo.Equals(hitTodo)) return;
             _hitToDo = hitTodo;
             ToDoTitle.text = _hitToDo.Text;
@@ -60,7 +60,12 @@ namespace UniRedux.Zenject.Examples.Signal
 
             protected override void OnSpawned(ToDoElement item)
             {
-                base.OnSpawned(item);
+                item.gameObject.SetActive(true);
+            }
+
+            protected override void OnDespawned(ToDoElement item)
+            {
+                item.gameObject.SetActive(false);
             }
         }
     }

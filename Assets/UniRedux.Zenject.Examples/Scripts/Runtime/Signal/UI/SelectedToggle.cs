@@ -40,6 +40,7 @@ namespace UniRedux.Zenject.Examples.Signal
         private void OnChange(ToDo toDo)
         {
             _toDo = toDo;
+            if (_toDo == null || _toDo.Id < 0) return;
             isOn = _toDo.Selected;
         }
     }

@@ -21,20 +21,14 @@ namespace UniRedux
             get; private set;
         }
 
-        public Type OriginalStateType
-        {
-            get; private set;
-        }
-
         public IUniReduxStateDirector Director
         {
             get; private set;
         }
 
-        public UniReduxSignalDeclarationBindInfo(Type localStateType, Type originalStateType, IUniReduxStateDirector director)
+        public UniReduxSignalDeclarationBindInfo(Type localStateType, IUniReduxStateDirector director)
         {
             LocalStateType = localStateType;
-            OriginalStateType = originalStateType;
             Director = director;
         }
     }

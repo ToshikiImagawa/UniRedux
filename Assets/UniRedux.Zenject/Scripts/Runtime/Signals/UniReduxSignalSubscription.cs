@@ -50,7 +50,7 @@ namespace UniRedux
         {
             _callback = null;
             _declaration = null;
-            _signalId = new UniReduxBindingId();
+            _signalId = UniReduxBindingId.Empty;
         }
 
         public class Pool : PoolableMemoryPool<Action<object>, UniReduxSignalDeclaration, UniReduxSignalSubscription>

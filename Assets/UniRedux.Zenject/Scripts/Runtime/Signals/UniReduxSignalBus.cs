@@ -11,8 +11,9 @@ namespace UniRedux
         private readonly UniReduxSignalSubscription.Pool _subscriptionPool;
         private readonly Dictionary<UniReduxBindingId, UniReduxSignalDeclaration> _localDeclarationMap;
         private readonly Dictionary<UniReduxSignalSubscriptionId, UniReduxSignalSubscription> _subscriptionMap = new Dictionary<UniReduxSignalSubscriptionId, UniReduxSignalSubscription>();
-        private readonly UniReduxBindingId[] _rootStateDeclarationBindingIds;
-        private readonly Dictionary<UniReduxBindingId, UniReduxBindingId[]> _nestedLocalDeclarationMap;
+        private readonly Dictionary<UniReduxBindingId, UniReduxBindingId[]> _nestedBindingIdMap;
+
+        private readonly Dictionary<UniReduxSignalBus, Action<UniReduxBindingId, object>> _childFireMap = new Dictionary<UniReduxSignalBus, Action<UniReduxBindingId, object>>();
 
         private readonly UniReduxSignalBus _parentBus;
         private readonly IDisposable _disposable;
@@ -39,50 +40,45 @@ namespace UniRedux
             _subscriptionPool = subscriptionPool;
             _localDeclarationMap = signalDeclarations.ToDictionary(x => x.BindingId, x => x);
             _parentBus = parentBus;
-            _disposable = store.Subscribe(OnChangeState);
             _getState = store.GetState;
-            _rootStateDeclarationBindingIds = signalDeclarations
-                .Where(x => x.BindingId.OriginalStateType == store.GetStateType())
-                .Select(x => x.BindingId).ToArray();
-            _nestedLocalDeclarationMap = signalDeclarations.GroupBy(x => x.ParentBindingId)
+            _nestedBindingIdMap = signalDeclarations.GroupBy(x => x.ParentBindingId)
                 .ToDictionary(x => x.Key, x => x.Select(y => y.BindingId).ToArray());
+            _disposable = _parentBus == null ? store.Subscribe(OnChangeState) : new ChildFireDisposable(_parentBus, this);
         }
 
-        public void Subscribe<TLocalState, TOriginalState>(Action callback, object identifier = null)
+        public void Subscribe<TLocalState>(Action callback, object identifier = null)
         {
-            Action<object> wrapperCallback = args => callback();
-            SubscribeInternal(typeof(TLocalState), typeof(TOriginalState), identifier, callback, wrapperCallback);
+            SubscribeInternal(typeof(TLocalState), identifier, callback, (object args) => callback());
         }
 
-        public void Subscribe<TLocalState, TOriginalState>(Action<TLocalState> callback, object identifier = null)
+        public void Subscribe<TLocalState>(Action<TLocalState> callback, object identifier = null)
         {
-            Action<object> wrapperCallback = args => callback((TLocalState)args);
-            SubscribeInternal(typeof(TLocalState), typeof(TOriginalState), identifier, callback, wrapperCallback);
+            SubscribeInternal(typeof(TLocalState), identifier, callback, (object args) => callback((TLocalState)args));
         }
 
-        public void Subscribe(Type localStateType, Type originalStateType, Action<object> callback, object identifier = null)
+        public void Subscribe(Type localStateType, Action<object> callback, object identifier = null)
         {
-            SubscribeInternal(localStateType, originalStateType, identifier, callback, callback);
+            SubscribeInternal(localStateType, identifier, callback, callback);
         }
 
-        public void Unsubscribe<TLocalState, TOriginalState>(Action callback, object identifier = null)
+        public void Unsubscribe<TLocalState>(Action callback, object identifier = null)
         {
-            Unsubscribe(typeof(TLocalState), typeof(TOriginalState), callback, identifier);
+            Unsubscribe(typeof(TLocalState), callback, identifier);
         }
 
-        public void Unsubscribe(Type localStateType, Type originalStateType, Action callback, object identifier = null)
+        public void Unsubscribe(Type localStateType, Action callback, object identifier = null)
         {
-            UnsubscribeInternal(localStateType, originalStateType, identifier, callback, true);
+            UnsubscribeInternal(localStateType, identifier, callback, true);
         }
 
-        public void Unsubscribe(Type localStateType, Type originalStateType, Action<object> callback, object identifier = null)
+        public void Unsubscribe(Type localStateType, Action<object> callback, object identifier = null)
         {
-            UnsubscribeInternal(localStateType, originalStateType, identifier, callback, true);
+            UnsubscribeInternal(localStateType, identifier, callback, true);
         }
 
-        public void Unsubscribe<TLocalState, TOriginalState>(Action<TLocalState> callback, object identifier = null)
+        public void Unsubscribe<TLocalState>(Action<TLocalState> callback, object identifier = null)
         {
-            UnsubscribeInternal(typeof(TLocalState), typeof(TOriginalState), identifier, callback, true);
+            UnsubscribeInternal(typeof(TLocalState), identifier, callback, true);
         }
 
         public void LateDispose()
@@ -90,11 +86,12 @@ namespace UniRedux
             _disposable?.Dispose();
             foreach (var subscription in _subscriptionMap.Values) subscription.Dispose();
             foreach (var declaration in _localDeclarationMap.Values) declaration.Dispose();
+            _childFireMap.Clear();
         }
 
-        private void SubscribeInternal(Type localStateType, Type originalStateType, object identifier, object token, Action<object> callback)
+        private void SubscribeInternal(Type localStateType, object identifier, object token, Action<object> callback)
         {
-            SubscribeInternal(new UniReduxBindingId(localStateType, originalStateType, identifier), token, callback);
+            SubscribeInternal(new UniReduxBindingId(localStateType, identifier), token, callback);
         }
 
         private void SubscribeInternal(UniReduxBindingId signalId, object token, Action<object> callback)
@@ -113,9 +110,9 @@ namespace UniRedux
             _subscriptionMap.Add(id, subscription);
         }
 
-        private void UnsubscribeInternal(Type localStateType, Type originalStateType, object identifier, object token, bool throwIfMissing)
+        private void UnsubscribeInternal(Type localStateType, object identifier, object token, bool throwIfMissing)
         {
-            UnsubscribeInternal(new UniReduxBindingId(localStateType, originalStateType, identifier), token, throwIfMissing);
+            UnsubscribeInternal(new UniReduxBindingId(localStateType, identifier), token, throwIfMissing);
         }
 
         private void UnsubscribeInternal(UniReduxBindingId signalId, object token, bool throwIfMissing)
@@ -142,9 +139,9 @@ namespace UniRedux
             }
         }
 
-        private UniReduxSignalDeclaration GetDeclaration(Type localStateType, Type originalStateType, object identifier)
+        private UniReduxSignalDeclaration GetDeclaration(Type localStateType, object identifier)
         {
-            return GetDeclaration(new UniReduxBindingId(localStateType, originalStateType, identifier));
+            return GetDeclaration(new UniReduxBindingId(localStateType, identifier));
         }
 
         private UniReduxSignalDeclaration GetDeclaration(UniReduxBindingId signalId)
@@ -156,26 +153,54 @@ namespace UniRedux
             throw Assert.CreateException("Fired undeclared signal '{0}'!", signalId);
         }
 
-        private IEnumerable<UniReduxBindingId> GetNestedBindingIds(UniReduxBindingId signalId)
+        private UniReduxBindingId[] GetNestedBindingIds(UniReduxBindingId signalId)
         {
-            if (!_nestedLocalDeclarationMap.ContainsKey(signalId)) yield break;
-            foreach (var bindingId in _nestedLocalDeclarationMap[signalId]) yield return bindingId;
+            if (!_nestedBindingIdMap.ContainsKey(signalId)) return Array.Empty<UniReduxBindingId>();
+            return _nestedBindingIdMap[signalId];
         }
 
         private void OnChangeState(VoidMessage _)
         {
             var state = _getState?.Invoke();
-            Fire(_rootStateDeclarationBindingIds, state);
+            Fire(UniReduxBindingId.Empty, state);
         }
 
-        private void Fire(IEnumerable<UniReduxBindingId> bindingIds, object state)
+        private void Fire(UniReduxBindingId bindingId, object state)
         {
-            if (bindingIds == null) return;
+            InnerFire(GetNestedBindingIds(bindingId), state);
+            foreach (var childFire in _childFireMap.Values)
+            {
+                childFire?.Invoke(bindingId, state);
+            }
+        }
+
+        private void InnerFire(UniReduxBindingId[] bindingIds, object state)
+        {
+            if (bindingIds == null || bindingIds.Length == 0) return;
             foreach (var bindingId in bindingIds)
             {
                 var declaration = GetDeclaration(bindingId);
                 var localState = declaration.Fire(state);
-                Fire(GetNestedBindingIds(bindingId), localState);
+                Fire(bindingId, localState);
+            }
+        }
+
+        private class ChildFireDisposable : IDisposable
+        {
+            private UniReduxSignalBus _parentSignalBus;
+            private UniReduxSignalBus _signalBus;
+
+            public ChildFireDisposable(UniReduxSignalBus parentSignalBus, UniReduxSignalBus signalBus)
+            {
+                if (parentSignalBus == null) Assert.CreateException();
+                _parentSignalBus = parentSignalBus;
+                _signalBus = signalBus;
+                _parentSignalBus._childFireMap[_signalBus] = _signalBus.Fire;
+            }
+
+            public void Dispose()
+            {
+                _parentSignalBus?._childFireMap?.Remove(_signalBus);
             }
         }
     }

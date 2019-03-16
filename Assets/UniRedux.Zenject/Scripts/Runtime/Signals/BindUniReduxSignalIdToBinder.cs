@@ -2,13 +2,13 @@
 
 namespace UniRedux
 {
-    public class BindUniReduxSignalIdToBinder<TLocalState, TOriginalState> : BindUniReduxSignalToBinder<TLocalState, TOriginalState>
+    public class BindUniReduxSignalIdToBinder<TLocalState> : BindUniReduxSignalToBinder<TLocalState>
     {
         public BindUniReduxSignalIdToBinder(DiContainer container, UniReduxSignalBindingBindInfo signalBindInfo)
                : base(container, signalBindInfo)
         {
         }
-        public BindUniReduxSignalToBinder<TLocalState, TOriginalState> WithId(object identifier)
+        public BindUniReduxSignalToBinder<TLocalState> WithId(object identifier)
         {
             SignalBindInfo.Identifier = identifier;
             return this;

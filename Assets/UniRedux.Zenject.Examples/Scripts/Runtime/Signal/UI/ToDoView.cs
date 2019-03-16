@@ -40,8 +40,8 @@ namespace UniRedux.Zenject.Examples.Signal
 
         public void Initialize()
         {
-            uniReduxSignalBus.Subscribe<ToDo[], ToDoState>(OnChange);
-            uniReduxSignalBus.Subscribe<ToDoFilter, ToDoState>(OnChange);
+            uniReduxSignalBus.Subscribe<ToDo[]>(OnChange);
+            uniReduxSignalBus.Subscribe<ToDoFilter>(OnChange);
         }
 
         private void UpdateDisplay()

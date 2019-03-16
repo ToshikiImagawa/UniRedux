@@ -8,7 +8,7 @@ namespace UniRedux
     {
         public static UniReduxSignalParentIdCopyBinder DeclareUniReduxSignal<TLocalState, TOriginalState>(this DiContainer container, Func<TOriginalState, TLocalState> converter, IEqualityComparer<TLocalState> equalityComparer = null)
         {
-            var signalBindInfo = new UniReduxSignalDeclarationBindInfo(typeof(TLocalState), typeof(TOriginalState), new UniReduxStateDirector<TLocalState, TOriginalState>(converter, equalityComparer));
+            var signalBindInfo = new UniReduxSignalDeclarationBindInfo(typeof(TLocalState), new UniReduxStateDirector<TLocalState, TOriginalState>(converter, equalityComparer));
 
             var bindInfo = container.Bind<UniReduxSignalDeclaration>().AsCached()
                 .WithArguments(signalBindInfo).WhenInjectedInto<UniReduxSignalBus>().BindInfo;
@@ -16,11 +16,11 @@ namespace UniRedux
             signalBinder.AddCopyBindInfo(bindInfo);
             return signalBinder;
         }
-        public static BindUniReduxSignalParentIdToBinder<TLocalState, TOriginalState> BindUniReduxSignal<TLocalState, TOriginalState>(this DiContainer container)
+        public static BindUniReduxSignalParentIdToBinder<TLocalState> BindUniReduxSignal<TLocalState>(this DiContainer container)
         {
-            var signalBindInfo = new UniReduxSignalBindingBindInfo(typeof(TLocalState), typeof(TOriginalState));
+            var signalBindInfo = new UniReduxSignalBindingBindInfo(typeof(TLocalState));
 
-            return new BindUniReduxSignalParentIdToBinder<TLocalState, TOriginalState>(container, signalBindInfo);
+            return new BindUniReduxSignalParentIdToBinder<TLocalState>(container, signalBindInfo);
         }
     }
 }

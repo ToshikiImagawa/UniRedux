@@ -33,7 +33,7 @@ namespace UniRedux.Zenject.Examples.Signal
             base.Awake();
             if (!Application.isPlaying) return;
 
-            uniReduxSignalBus?.Subscribe<ToDoFilter, ToDoState>(OnChange);
+            uniReduxSignalBus?.Subscribe<ToDoFilter>(OnChange);
             UpdateDisplay();
         }
 

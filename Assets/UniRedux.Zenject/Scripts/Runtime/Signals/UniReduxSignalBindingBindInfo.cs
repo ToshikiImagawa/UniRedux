@@ -9,12 +9,10 @@ namespace UniRedux
         public object Identifier { get; set; }
         public object ParentBindingId { get; set; }
         public Type LocalStateType { get; private set; }
-        public Type OriginalStateType { get; private set; }
 
-        public UniReduxSignalBindingBindInfo(Type localStateType, Type originalStateType)
+        public UniReduxSignalBindingBindInfo(Type localStateType)
         {
             LocalStateType = localStateType;
-            OriginalStateType = originalStateType;
         }
     }
 }

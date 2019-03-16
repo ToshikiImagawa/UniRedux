@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using UniRedux.Provider;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace UniRedux.Zenject.Examples.Signal
@@ -13,9 +12,6 @@ namespace UniRedux.Zenject.Examples.Signal
         private ToDo _hitToDo = new ToDo();
 
         public int ToDoId { get; private set; } = -1;
-        private Text ToDoTitle => this.GetComponentFindNameInChildren<Text>("ToDoTitle");
-
-        private SelectedToggle ToDoSelectToggle => this.GetComponentFindNameInChildren<SelectedToggle>("Selector");
 
         private CompleteButton CompleteButton => this.GetComponentFindNameInChildren<CompleteButton>("CompleteButton");
 
@@ -31,14 +27,9 @@ namespace UniRedux.Zenject.Examples.Signal
             if (hitTodo == null) return;
             if (_hitToDo.Equals(hitTodo)) return;
             _hitToDo = hitTodo;
-            ToDoTitle.text = _hitToDo.Text;
             CompleteButton.targetGraphic.color = _hitToDo.Completed
                 ? new Color(233f / 255f, 147f / 255f, 40f / 255f)
                 : new Color(137f / 255f, 137f / 255f, 137f / 255f);
-            ToDoTitle.color = _hitToDo.Completed
-                ? new Color(170f / 170f, 147f / 255f, 170f / 255f)
-                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
-            ToDoSelectToggle.isOn = _hitToDo.Selected;
         }
 
         private void OnChangeState()
@@ -55,7 +46,7 @@ namespace UniRedux.Zenject.Examples.Signal
 
             protected override void OnCreated(ToDoElement item)
             {
-                item.uniReduxSignalBus.Subscribe<ToDo[], ToDoState>(item.OnChangeState);
+                item.uniReduxSignalBus.Subscribe<ToDo[]>(item.OnChangeState);
             }
 
             protected override void OnSpawned(ToDoElement item)

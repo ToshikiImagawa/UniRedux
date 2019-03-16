@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace UniRedux
 {
-    public class BindUniReduxSignalToBinder<TLocalState, TOriginalState>
+    public class BindUniReduxSignalToBinder<TLocalState>
     {
         private readonly DiContainer _container;
         private readonly BindStatement _bindStatement;

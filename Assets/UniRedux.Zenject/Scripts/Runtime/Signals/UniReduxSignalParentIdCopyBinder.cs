@@ -10,14 +10,14 @@ namespace UniRedux
         {
         }
 
-        public UniReduxSignalIdCopyBinder SetParent<TLocalState, TOriginalState>(object identifier = null)
+        public UniReduxSignalIdCopyBinder SetParent<TLocalState>(object identifier = null)
         {
-            return SetParent(typeof(TLocalState), typeof(TOriginalState), identifier);
+            return SetParent(typeof(TLocalState), identifier);
         }
 
-        public UniReduxSignalIdCopyBinder SetParent(Type localStateType, Type originalStateType, object identifier = null)
+        public UniReduxSignalIdCopyBinder SetParent(Type localStateType, object identifier = null)
         {
-            SignalBindInfo.ParentBindingId = new UniReduxBindingId(localStateType, originalStateType, identifier);
+            SignalBindInfo.ParentBindingId = new UniReduxBindingId(localStateType, identifier);
             return this;
         }
     }

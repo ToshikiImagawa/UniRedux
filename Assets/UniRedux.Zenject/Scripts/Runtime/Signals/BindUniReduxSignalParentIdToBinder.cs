@@ -3,20 +3,20 @@ using Zenject;
 
 namespace UniRedux
 {
-    public class BindUniReduxSignalParentIdToBinder<TLocalState, TOriginalState> : BindUniReduxSignalIdToBinder<TLocalState, TOriginalState>
+    public class BindUniReduxSignalParentIdToBinder<TLocalState> : BindUniReduxSignalIdToBinder<TLocalState>
     {
         public BindUniReduxSignalParentIdToBinder(DiContainer container, UniReduxSignalBindingBindInfo signalBindInfo)
                : base(container, signalBindInfo)
         {
         }
 
-        public BindUniReduxSignalIdToBinder<TLocalState, TOriginalState> SetParent<TParentLocalState, TParentOriginalState>(object identifier = null)
+        public BindUniReduxSignalIdToBinder<TLocalState> SetParent<TParentLocalState>(object identifier = null)
         {
-            return SetParent(typeof(TParentLocalState), typeof(TParentOriginalState), identifier);
+            return SetParent(typeof(TParentLocalState), identifier);
         }
-        public BindUniReduxSignalIdToBinder<TLocalState, TOriginalState> SetParent(Type localStateType, Type originalStateType, object identifier = null)
+        public BindUniReduxSignalIdToBinder<TLocalState> SetParent(Type localStateType, object identifier = null)
         {
-            SignalBindInfo.ParentBindingId = new UniReduxBindingId(localStateType, originalStateType, identifier);
+            SignalBindInfo.ParentBindingId = new UniReduxBindingId(localStateType, identifier);
             return this;
         }
     }

@@ -18,7 +18,7 @@ namespace UniRedux
 
         public UniReduxSignalDeclaration(UniReduxSignalDeclarationBindInfo bindInfo)
         {
-            _bindingId = new UniReduxBindingId(bindInfo.LocalStateType, bindInfo.OriginalStateType, bindInfo.Identifier);
+            _bindingId = new UniReduxBindingId(bindInfo.LocalStateType, bindInfo.Identifier);
             _director = bindInfo.Director;
             _parentBindingId = bindInfo.ParentBindingId;
         }
@@ -34,7 +34,6 @@ namespace UniRedux
 
         public object Fire(object originalState)
         {
-            if (!originalState.GetType().DerivesFromOrEqual(_bindingId.OriginalStateType)) throw Assert.CreateException();
             using (var block = DisposeBlock.Spawn())
             {
                 var subscriptions = block.SpawnList<UniReduxSignalSubscription>();

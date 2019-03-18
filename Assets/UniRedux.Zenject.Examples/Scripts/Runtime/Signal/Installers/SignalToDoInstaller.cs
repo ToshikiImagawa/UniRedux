@@ -1,5 +1,4 @@
-﻿using UniRedux.Provider;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 
 namespace UniRedux.Zenject.Examples.Signal.Installers
@@ -8,12 +7,14 @@ namespace UniRedux.Zenject.Examples.Signal.Installers
     {
         [SerializeField] private ToDoElement toDoElement;
         [SerializeField] private Transform createPoint;
+
         public override void InstallBindings()
         {
             UniReduxSignalBusInstaller.Install(Container);
             Container.Bind<IStore>().FromResolveGetter<ToDoApp>(app => app.Store).AsSingle();
             Container.DeclareUniReduxSignal<ToDoFilter, ToDoState>(state => state.Filter);
             Container.DeclareUniReduxSignal<ToDo[], ToDoState>(state => state.ToDos);
+
             Container.BindMemoryPool<ToDoElement, ToDoElement.Pool>()
                 .WithInitialSize(10)
                 .FromComponentInNewPrefab(toDoElement)

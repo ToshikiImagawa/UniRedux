@@ -1,40 +1,41 @@
 ﻿using System.Linq;
 using UniRedux.Provider;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace UniRedux.Zenject.Examples.Signal
 {
     public class ToDoElement : MonoBehaviour
     {
-        [Inject]
-        private UniReduxSignalBus uniReduxSignalBus;
-        private ToDo _hitToDo = new ToDo();
+        [Inject] private UniReduxSignalBus _reduxSignalBus;
+        private ToDo _toDo = new ToDo();
 
         public int ToDoId { get; private set; } = -1;
 
         private CompleteButton CompleteButton => this.GetComponentFindNameInChildren<CompleteButton>("CompleteButton");
+        private Text Title => this.GetComponentFindNameInChildren<Text>("ToDoTitle");
+        private SelectedToggle Selector => this.GetComponentFindNameInChildren<SelectedToggle>("Selector");
 
         public void SetId(int id)
         {
             ToDoId = id;
-            UpdateDisplay();
+            OnChangeState(UniReduxProvider.GetStore<ToDoState>().GetState().ToDos
+                .FirstOrDefault(todo => todo.Id == ToDoId));
         }
-
-        private void UpdateDisplay()
+        private void OnChangeState(ToDo toDo)
         {
-            var hitTodo = UniReduxProvider.GetStore<ToDoState>().GetState().ToDos.FirstOrDefault(todo => todo.Id == ToDoId);
-            if (hitTodo == null) return;
-            if (_hitToDo.Equals(hitTodo)) return;
-            _hitToDo = hitTodo;
-            CompleteButton.targetGraphic.color = _hitToDo.Completed
+            if (toDo == null) return;
+            if (_toDo.Equals(toDo)) return;
+            _toDo = toDo;
+            CompleteButton.targetGraphic.color = _toDo.Completed
                 ? new Color(233f / 255f, 147f / 255f, 40f / 255f)
                 : new Color(137f / 255f, 137f / 255f, 137f / 255f);
-        }
-
-        private void OnChangeState()
-        {
-            UpdateDisplay();
+            Title.text = _toDo.Text;
+            Title.color = _toDo.Completed
+                ? new Color(170f / 170f, 147f / 255f, 170f / 255f)
+                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
+            Selector.isOn = _toDo.Selected;
         }
 
         public class Pool : MemoryPool<Transform, ToDoElement>
@@ -46,7 +47,7 @@ namespace UniRedux.Zenject.Examples.Signal
 
             protected override void OnCreated(ToDoElement item)
             {
-                item.uniReduxSignalBus.Subscribe<ToDo[]>(item.OnChangeState);
+                item._reduxSignalBus.Subscribe<ToDo>(item.OnChangeState);
             }
 
             protected override void OnSpawned(ToDoElement item)

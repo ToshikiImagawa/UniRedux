@@ -21,7 +21,7 @@ namespace UniRedux.Zenject.Examples.Signal.Installers
                 .UnderTransformGroup("ToDoElement");
             Container.Bind<ToDoApp>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ToDoView>().AsSingle();
-            Container.BindInstance(createPoint).WhenInjectedInto<ToDoView>();
+            Container.BindInstance(createPoint).WhenInjectedInto<ToDoElement.Pool>();
         }
     }
 }

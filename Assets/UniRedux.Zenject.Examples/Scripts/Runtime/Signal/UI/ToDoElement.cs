@@ -38,26 +38,27 @@ namespace UniRedux.Zenject.Examples.Signal
             Selector.isOn = _toDo.Selected;
         }
 
-        public class Pool : MemoryPool<Transform, ToDoElement>
+        public class Pool : MemoryPool<ToDoElement>
         {
-            protected override void Reinitialize(Transform parentTransform, ToDoElement element)
-            {
-                element.transform.SetParent(parentTransform, false);
-            }
+            [Inject] private Transform _parentTransform;
 
             protected override void OnCreated(ToDoElement item)
             {
-                item._reduxSignalBus.Subscribe<ToDo>(item.OnChangeState);
+                item.transform.SetParent(_parentTransform, false);
+                item.gameObject.SetActive(false);
+                item.name = "ToDoElement";
             }
 
             protected override void OnSpawned(ToDoElement item)
             {
                 item.gameObject.SetActive(true);
+                item._reduxSignalBus.Subscribe<ToDo>(item.OnChangeState);
             }
 
             protected override void OnDespawned(ToDoElement item)
             {
                 item.gameObject.SetActive(false);
+                item._reduxSignalBus.Unsubscribe<ToDo>(item.OnChangeState);
             }
         }
     }

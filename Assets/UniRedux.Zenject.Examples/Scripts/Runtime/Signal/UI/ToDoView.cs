@@ -11,8 +11,6 @@ namespace UniRedux.Zenject.Examples.Signal
         [Inject]
         private UniReduxSignalBus uniReduxSignalBus;
         [Inject]
-        private Transform _createPoint;
-        [Inject]
         private ToDoElement.Pool _pool;
 
         private List<ToDoElement> _toDoElements = new List<ToDoElement>();
@@ -59,7 +57,7 @@ namespace UniRedux.Zenject.Examples.Signal
                 if (_toDoElements.Count > i) toDoElement = _toDoElements[i];
                 else
                 {
-                    toDoElement = _pool.Spawn(_createPoint);
+                    toDoElement = _pool.Spawn();
                     _toDoElements.Add(toDoElement);
                 }
                 toDoElement.transform.SetAsLastSibling();

@@ -5,10 +5,9 @@ namespace UniRedux.Zenject.Examples.Signal
 {
     public class SelectedToggle : Toggle
     {
-        [Inject]
-        private UniReduxSignalBus _uniReduxSignalBus;
+        [Inject] private UniReduxSignalBus _uniReduxSignalBus;
 
-        private ToDo _toDo;
+        [Inject] private ToDoElement _toDoElement;
 
         public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData eventData)
         {
@@ -19,12 +18,6 @@ namespace UniRedux.Zenject.Examples.Signal
             Run(!isOn);
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            _uniReduxSignalBus.Subscribe<ToDo>(OnChange);
-        }
-
         private void Run(bool select)
         {
             DispatchAction(select);
@@ -32,15 +25,8 @@ namespace UniRedux.Zenject.Examples.Signal
 
         private void DispatchAction(bool select)
         {
-            if (_toDo == null || _toDo.Id < 0) return;
-            UniReduxProvider.Store.Dispatch(ToDoActionCreator.UpdateSelectedToDo(_toDo.Id, select));
-        }
-
-        private void OnChange(ToDo toDo)
-        {
-            _toDo = toDo;
-            if (_toDo == null || _toDo.Id < 0) return;
-            isOn = _toDo.Selected;
+            if (_toDoElement.ToDoId < 0) return;
+            UniReduxProvider.Store.Dispatch(ToDoActionCreator.UpdateSelectedToDo(_toDoElement.ToDoId, select));
         }
     }
 }

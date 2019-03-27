@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 using UnityEngine;
 
 namespace UniRedux.EventSystems

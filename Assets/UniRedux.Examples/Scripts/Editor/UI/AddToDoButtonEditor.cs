@@ -4,7 +4,7 @@ using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniRedux.Examples.Application.Editor
+namespace UniRedux.Examples.EventSystem.Editor
 {
     [CustomEditor(typeof(AddToDoButtonBase), true), CanEditMultipleObjects]
     public class AddToDoButtonEditor : ButtonEditor

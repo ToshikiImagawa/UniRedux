@@ -1,9 +1,9 @@
-﻿namespace UniRedux.Zenject.Examples.Signal
+namespace UniRedux.Examples.EventSystem
 {
-    public class ToDoApp
+    public static class ToDoApp
     {
-        public IStore Store => UniReduxProvider.Store;
-        public ToDoApp()
+        public static IStore<ToDoState> Store => UniReduxProvider.GetStore<ToDoState>();
+        static ToDoApp()
         {
             UniReduxProvider.SetStore(Redux.CreateStore(
                 ToDoReducer.Execute, ToDoReducer.InitState,

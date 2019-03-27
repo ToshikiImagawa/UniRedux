@@ -2,7 +2,6 @@
     "name": "UniRedux.Zenject.Examples-Editor",
     "references": [
         "UniRedux.Zenject.Examples",
-        "UniRedux.Zenject-Editor",
         "UniRedux",
         "Zenject",
         "UniRedux-Editor"
@@ -12,5 +11,9 @@
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

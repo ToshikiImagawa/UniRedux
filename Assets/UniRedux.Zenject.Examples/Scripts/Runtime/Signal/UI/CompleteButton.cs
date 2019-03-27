@@ -1,5 +1,4 @@
-﻿using UniRedux.Provider;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using Zenject;
 
 namespace UniRedux.Zenject.Examples.Signal

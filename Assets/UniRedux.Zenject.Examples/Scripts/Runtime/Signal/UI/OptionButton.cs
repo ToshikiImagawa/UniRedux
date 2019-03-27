@@ -1,5 +1,4 @@
 ﻿using System;
-using UniRedux.Provider;
 using UnityEngine;
 using UnityEngine.UI;
 

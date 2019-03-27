@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRedux.EventSystems;
-using UniRedux.Examples.Application;
-using UniRedux.Provider;
 using UnityEngine;
 using UnityEngine.UI;
 

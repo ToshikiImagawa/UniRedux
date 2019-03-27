@@ -1,5 +1,5 @@
 using UniRedux.EventSystems;
-using UniRedux.Examples.Application;
+using UniRedux.Examples.EventSystem;
 using UnityEngine;
 using UnityEngine.UI;
 

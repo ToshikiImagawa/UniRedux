@@ -6,8 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/UniRedux/Examples/SimpleToDo.unity
-    guid: 9fe97fee6cac17b488faeb4fffe832c1
-  - enabled: 1
-    path: Assets/UniRedux/Examples/SimpleToDoMirror.unity
-    guid: efa684b4ca6673d4890585f7a5120458
+    path: Assets/UniRedux.Zenject.Examples/Scenes/SignalToDo.unity
+    guid: 0730be388e7188c40990a236431f2abd
+  m_configObjects: {}

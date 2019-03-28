@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/UniRedux.Zenject.Examples/Scenes/SignalToDo.unity
     guid: 0730be388e7188c40990a236431f2abd
+  - enabled: 1
+    path: Assets/UniRedux.Zenject.Examples/Scenes/SignalToDoMiller.unity
+    guid: 948b13f23762542b4a904739a8157eed
   m_configObjects: {}

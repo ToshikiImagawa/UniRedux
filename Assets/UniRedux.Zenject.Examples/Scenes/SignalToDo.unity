@@ -1122,8 +1122,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 300}
+  m_SizeDelta: {x: 0, y: -600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &582153980
 MonoBehaviour:
@@ -1640,7 +1640,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 1200}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1800,7 +1800,8 @@ MonoBehaviour:
   _installerPrefabs: []
   _autoRun: 1
   _parentNewObjectsUnderSceneContext: 0
-  _contractNames: []
+  _contractNames:
+  - SimpleToDo
   _parentContractNames: []
 --- !u!4 &1141205678
 Transform:
@@ -2147,7 +2148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00006596254}
+  m_AnchoredPosition: {x: 0, y: 0.000020377893}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1403362965
@@ -2483,9 +2484,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e3330caea1697439f713cd06676e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toDoElement: {fileID: 7715798508738490995, guid: dfb6b330bd827404cb3f3cd32984f371,
-    type: 3}
-  createPoint: {fileID: 1403362964}
 --- !u!81 &1853027161
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2728,6 +2726,8 @@ GameObject:
   - component: {fileID: 2107020933}
   - component: {fileID: 2107020932}
   - component: {fileID: 2107020931}
+  - component: {fileID: 2107020935}
+  - component: {fileID: 2107020934}
   m_Layer: 5
   m_Name: ToDo Viewer
   m_TagString: Untagged
@@ -2825,6 +2825,39 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &2107020934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107020929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 2107020935}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}
+--- !u!114 &2107020935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107020929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cb231e95de04b74a912402e8925243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toDoElement: {fileID: 7715798508738490995, guid: dfb6b330bd827404cb3f3cd32984f371,
+    type: 3}
+  createPoint: {fileID: 1403362964}
 --- !u!1 &2145809251
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,17 +16,20 @@ namespace UniRedux
         public UniReduxBindingId BindingId => _bindingId;
         public UniReduxBindingId ParentBindingId => _parentBindingId;
 
+        [Inject]
         public UniReduxSignalDeclaration(UniReduxSignalDeclarationBindInfo bindInfo)
         {
             _bindingId = new UniReduxBindingId(bindInfo.LocalStateType, bindInfo.Identifier);
             _director = bindInfo.Director;
             _parentBindingId = bindInfo.ParentBindingId;
         }
+
         public void Add(UniReduxSignalSubscription subscription)
         {
             if (_subscriptions.Contains(subscription)) throw Assert.CreateException();
             _subscriptions.Add(subscription);
         }
+
         public void Remove(UniReduxSignalSubscription subscription)
         {
             _subscriptions.RemoveWithConfirm(subscription);
@@ -63,6 +66,7 @@ namespace UniRedux
                     subscription.Invoke(_locaState);
                 }
             }
+
             return _locaState;
         }
     }

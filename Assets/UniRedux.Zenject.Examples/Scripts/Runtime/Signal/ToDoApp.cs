@@ -1,4 +1,6 @@
-﻿namespace UniRedux.Zenject.Examples.Signal
+﻿using UnityEngine.SceneManagement;
+
+namespace UniRedux.Zenject.Examples.Signal
 {
     public class ToDoApp
     {
@@ -10,6 +12,8 @@
                 UniReduxMiddleware.Logger,
                 UniReduxMiddleware.CheckImmutableUpdate
             ));
+
+            SceneManager.LoadScene("SignalToDoMiller", LoadSceneMode.Additive);
         }
     }
 }

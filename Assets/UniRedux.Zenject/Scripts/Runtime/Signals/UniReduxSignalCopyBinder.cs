@@ -8,15 +8,7 @@ namespace UniRedux
     {
         private readonly List<BindInfo> _bindInfos;
 
-        protected UniReduxSignalDeclarationBindInfo SignalBindInfo
-        {
-            get; private set;
-        }
-
-        public UniReduxSignalCopyBinder()
-        {
-            _bindInfos = new List<BindInfo>();
-        }
+        protected UniReduxSignalDeclarationBindInfo SignalBindInfo { get; private set; }
 
         public UniReduxSignalCopyBinder(BindInfo bindInfo)
         {
@@ -25,6 +17,7 @@ namespace UniRedux
                 bindInfo
             };
         }
+
         public UniReduxSignalCopyBinder(
             UniReduxSignalDeclarationBindInfo signalBindInfo)
         {

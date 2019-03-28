@@ -29,6 +29,7 @@ namespace UniRedux
             get { return _subscriptionMap.Count; }
         }
 
+        [Inject]
         public UniReduxSignalBus(
             [Inject(Source = InjectSources.Local)]
             List<UniReduxSignalDeclaration> signalDeclarations,

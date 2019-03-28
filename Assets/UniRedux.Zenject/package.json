@@ -1,0 +1,12 @@
+{
+    "name": "com.comcreate-info.uni_redux_zenject",
+    "displayName": "UniRedux for Zenject",
+    "version": "1.0.0",
+    "unity": "2018.1",
+    "description": "This is UniRedux for Zenject Package.",
+    "keywords": ["Script", "Test"],
+    "category": "Controllers",
+    "dependencies": { 
+        "com.comcreate-info.uni_redux" : "2.0.0"
+    }
+}

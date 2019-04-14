@@ -22,6 +22,7 @@ namespace UniRedux.Zenject.Examples.Signal
             OnChangeState(UniReduxProvider.GetStore<ToDoState>().GetState().ToDos
                 .FirstOrDefault(todo => todo.Id == ToDoId));
         }
+
         private void OnChangeState(ToDo toDo)
         {
             if (toDo == null) return;

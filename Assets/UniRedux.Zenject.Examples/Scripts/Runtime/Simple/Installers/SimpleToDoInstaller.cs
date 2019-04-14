@@ -10,7 +10,8 @@ namespace UniRedux.Zenject.Examples.Simple
 
         public override void InstallBindings()
         {
-            ToDoStateInstaller.Install(Container);
+            Container.Bind<ToDoApp>().AsSingle().NonLazy();
+            Container.Bind<IStore>().FromResolveGetter<ToDoApp>(app => app.Store).AsSingle();
             Container.BindMemoryPool<ToDoElement, ToDoElement.Pool>()
                 .WithInitialSize(10)
                 .FromComponentInNewPrefab(_toDoElement)

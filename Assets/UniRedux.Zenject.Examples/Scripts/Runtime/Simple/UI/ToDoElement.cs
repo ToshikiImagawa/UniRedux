@@ -82,9 +82,23 @@ namespace UniRedux.Zenject.Examples.Simple
 
         public class Pool : MonoMemoryPool<Transform, ToDoElement>
         {
-            protected override void Reinitialize(Transform parentTransform, ToDoElement element)
+            [Inject] private Transform _parentTransform;
+
+            protected override void OnCreated(ToDoElement item)
             {
-                element.transform.SetParent(parentTransform, false);
+                item.transform.SetParent(_parentTransform, false);
+                item.gameObject.SetActive(false);
+                item.name = "ToDoElement";
+            }
+
+            protected override void OnSpawned(ToDoElement item)
+            {
+                item.gameObject.SetActive(true);
+            }
+
+            protected override void OnDespawned(ToDoElement item)
+            {
+                item.gameObject.SetActive(false);
             }
         }
     }

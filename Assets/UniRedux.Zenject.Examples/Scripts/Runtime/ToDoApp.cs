@@ -1,6 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 
-namespace UniRedux.Zenject.Examples.Signal
+namespace UniRedux.Zenject.Examples
 {
     public class ToDoApp
     {
